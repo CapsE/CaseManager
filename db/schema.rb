@@ -14,6 +14,8 @@ ActiveRecord::Schema.define(version: 20130814141914) do
 
   create_table "cases", force: true do |t|
     t.string   "tags"
+    t.text     "comment"
+    t.text     "input"
     t.text     "code"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -21,6 +23,7 @@ ActiveRecord::Schema.define(version: 20130814141914) do
 
   create_table "groups", force: true do |t|
     t.string   "tags"
+    t.text     "comment"
     t.text     "elements"
     t.integer  "level"
     t.datetime "created_at"

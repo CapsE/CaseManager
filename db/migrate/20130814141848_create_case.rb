@@ -2,6 +2,8 @@ class CreateCase < ActiveRecord::Migration
   def up
 	create_table :cases do |t|
 		t.string :tags
+		t.text :comment
+		t.text :input
 		t.text :code	
 		t.timestamps
 	end

@@ -1,13 +1,18 @@
 <h2>Create Case</h2>
 <br/>
-<div class="case">
-<form action="/caseses" method="post">
+<div class="case" Style="padding:10px">
+<form action="/caseses" method="post" width="100%">
   <label for="post_title">Tags:</label>
-  <input id="post_title" name="post[tags]" type="text" value="<%= @case.tags %>" size="77"/>
+  <input id="post_title" name="post[tags]" type="text" value="<%= @case.tags %>" size="77"/><br>
+  <label for="post_body">Beschreibung:</label><br>
+  <textarea id="post_body" name="post[comment]" rows="5" Style="width:95%;"><%= @case.comment %></textarea>
   <br/>
+  <br/>
+  <label for="post_input">Input-Variablen:</label><br>
+  <input id="post_input" name="post[input]" type="text" value="<%= @case.input %>" size="150"/>
   <br/>
   <label for="post_body">Code:</label><br>
-  <textarea id="post_body" name="post[code]" rows="10"><%= @case.code %></textarea>
+  <textarea id="post_body" name="post[code]" rows="10" Style="width:95%;"><%= @case.code %></textarea>
   <br />
   <input type="submit" value="Create!"/>
 </form> 

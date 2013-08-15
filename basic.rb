@@ -1,11 +1,17 @@
 def Log text
-	$log += "<code>#{text}</code>"
+	$log += "<code>#{text}</code><p>"
+end
+
+def SetResult bool
+	if $result != false
+		$result = bool
+	end
 end
 
 def Equal a,b
 	if a == b
-		$result = true
+		SetResult(true)
 	else
-		$result = false
+		SetResult(false)
 	end
 end
