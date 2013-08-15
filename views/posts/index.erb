@@ -1,15 +1,31 @@
-<ul>
-<% @posts.each do |post| %>
-  <li>
-    <h4><a href="/posts/<%= post.id %>"><%= post.title %></a></h4>
-    <p>Created: <%= post.created_at %></p>
-  </li>
+<div id="groups" style="float:left; width:50%">
+<h2>Gruppen</h2>
+<% @groups.each do |group| %>
+    <div class="group">
+	<h4><a href="/run/<%= group.id %>"><%= "##{group.id} #{group.tags}" %></a><a href="/groups/edit/<%= group.id %>" style="float:right">edit</a></h4>
+	<ul>
+		<% if group.elements
+			group.elements.split(",").each do |rela| 
+				if rela[0] == "C"
+					c = Case.find(rela[1..-1])
+				else
+					c = Group.find(rela[1..-1])
+				end%>
+			<li><%= "#" + c.id.to_s + " " + c.tags%></li>
+		<% end
+		end %>
+	</ul>
+    <p>Created: <%= group.created_at %></p>
+	</div>
 <% end %>
-</ul>
-<hr>
-<% @things.each do |post| %>
-  <li>
-    <h4><a href="/posts/<%= post.id %>"><%= post.title %></a></h4>
-    <p>Created: <%= post.created_at %></p>
-  </li>
+</div>
+<div id="cases" style="float:left; width:50%">
+<h2>Cases</h2>
+<% @caseses.each do |c| %>
+  <div class="case">
+    <h4><a href="/caseses/edit/<%= c.id %>"><%= "##{c.id} #{c.tags}" %></a></h4>
+	<p><code><%= c.code %></code>
+    <p>Created: <%= c.created_at %></p>
+  </div>
 <% end %>
+</div>

@@ -1,0 +1,96 @@
+<h2>Create Group</h2>
+<br/>
+<div class="group" style="float:left; width:50%; padding:5px; background:#FFC8AD; position:fixed; top:100px; left:5px;">
+<form id="groupForm" action="/groups" method="post">
+  <label for="post_title">Tags:</label>
+  <input id="post_title" name="post[tags]" type="text" value="default" size="77"/>
+  <input id="post_elements" name="post[elements]" type="text" value="">
+  <input id="post_level" name="post[level]" type="text" value="1">
+  <br/>
+  <br/>
+  <label for="post_body">Inhalt:</label><br>
+  <div id="holder">
+  
+  </div>
+  <br />
+  <input type="submit" value="Create!"/>
+</form> 
+</div>
+<div style="float:right; width:49%">
+	<h2>Gruppen</h2>
+	<% @groups.each do |group| %>
+    <div class="group">
+	<h4><a id="<%= group.id %>" class="myButton" onclick="AddMe(event)" data-level="<%= group.level %>" ><%= "<< ##{group.id} #{group.tags}" %></a></h4>
+	<ul>
+		<% if group.elements
+		group.elements.split(",").each do |rela| 
+			if rela[0] == "C"
+				c = Case.find(rela[1..-1])
+			else
+				c = Group.find(rela[1..-1])
+			end%>
+			<li><%= "#" + rela[0] + c.id.to_s + " " + c.tags%></li>
+		<% end
+		end %>
+	</ul>
+    <p>Created: <%= group.created_at %></p>
+	</div>
+<% end %>
+
+	<h2>Cases</h2>
+	<% @caseses.each do |c| %>
+	  <div class="case">
+		<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
+		<p><code><%= c.code %></code>
+		<p>Created: <%= c.created_at %></p>
+	  </div>
+	<% end %>
+</div>
+
+<script>
+	var objects = [];
+	
+	function update(){
+		var max = 0;
+		var childs = document.getElementById("holder").children;
+		document.getElementById("post_elements").value = "";
+		document.getElementById("post_elements").value = childs[0].dataset.id;
+		if(childs[0].dataset.level > max){
+			max = childs[0].dataset.level
+		}
+		for(i = 1; i < childs.length; i++){
+			document.getElementById("post_elements").value += "," + childs[i].dataset.id;
+			if(childs[i].dataset.level > max){
+				max = childs[i].dataset.level
+			}
+		}
+		
+		document.getElementById("post_level").value = parseInt(max) +1;
+	}
+	
+	function AddMe(event){
+		var obj = document.createElement('div');
+		obj.id = event.target.id;
+		obj.setAttribute("class", event.target.parentNode.parentNode.className);
+		if(event.target.parentNode.parentNode.className == "group"){
+			document.getElementById("post_elements").value += ",G" + event.target.id;
+			obj.dataset.id = "G" + event.target.id;
+		}else{
+			document.getElementById("post_elements").value += ",C" + event.target.id;
+			obj.dataset.id = "C" + event.target.id;		
+		}
+		obj.dataset.level = event.target.dataset.level;
+		obj.setAttribute("onclick", "RemoveMe(event)");
+		obj.innerHTML = event.target.innerHTML.substr(9) + " >>";
+		obj.style.color = "#A62222";
+		obj.style.cursor = "pointer";
+		document.getElementById("holder").appendChild(obj);
+		update();
+		//
+	}
+	
+	function RemoveMe(event){
+		document.getElementById("holder").removeChild(event.target);
+		update();
+	}
+</script>

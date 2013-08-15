@@ -2,22 +2,14 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Style.css" rel="stylesheet">
   </head>
-  <body style="padding-top: 50px;">
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="/">
-              Sinatra Sings
-            </a>
-            <ul class="nav pull-right">
-              <li><a href="/">Home</a></li>
-              <li><a href="/posts/create">New Post</a></li>
-            </ul>
-        </div>
-      </div>
+  <body>
+    <div class="navigation">
+		<a class="MItem" href="/">Case Manager</a>
+		<a class="MItem" href="/">Home</a>
+		<a class="MItem" href="/caseses/create">New Case</a>
+		<a class="MItem" href="/groups/create">New Group</a>
     </div>
     <div class="container">
       <% if flash[:notice] %>
