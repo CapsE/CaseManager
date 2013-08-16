@@ -1,0 +1,21 @@
+<div class="case">
+	<form action="/run" method="post">
+		<input id="post_id" name="post[id]" type="text" value="<%= @group.id %>" readonly size="5"/><br>
+	<% @group.elements.split(",").each do |el|
+		if el[0] == "C"
+			classname = "case"
+			c = Case.find(el[1..-1])
+			inputs = c.input.split(",")
+		end
+		if inputs
+		inputs.each do |inp|%>
+			<label for="post_<%= inp %>"><%= inp %>:</label>
+			<input id="post_<%= inp %>" name="post[<%= inp %>]" type="text" value="" size="200"/><br>
+		<% end
+		end
+	end%>
+		
+		 
+		 <input type="submit" value="Start"/>
+	</form> 
+</div>
