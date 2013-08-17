@@ -21,11 +21,31 @@ begin # Klassen definitionen der Datenbank elemente
 	end
 end
 
+def ParseElements group
+	@tree += "<h4 class='group' onclick='Toggle(\"item_#{@id}\")'>#{group.tags}</h4><ul id='item_#{@id}'>"
+	@id +=1
+	group.elements.split(",").each do |el|
+		if el[0] == "C"
+			c = Case.find(el[1..-1])
+			@tree += "<li class='case'>#{c.tags}</li>"
+		else
+			g = Group.find(el[1..-1])
+			ParseElements(g)
+		end
+	end
+	@tree += "</ul>"
+end
+
 get "/" do
-  @groups = Group.order("created_at DESC")
-  @caseses = Case.order("created_at DESC")
-  @title = "Welcome."
-  erb :"posts/index"
+	@groups = Group.order("created_at DESC")
+	@tree = ""
+	@id = 0
+	@groups.each do |group|
+		ParseElements(group) 
+	end
+	@caseses = Case.order("created_at DESC")
+	@title = "Welcome."
+	erb :"posts/index"
 end
 
 get "/result" do

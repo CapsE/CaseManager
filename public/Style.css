@@ -4,12 +4,12 @@
 }
 
 .navigation{
-	background:linear-gradient( #BEEFA2 0%,  #7BAB5F 100%);
+	background:linear-gradient( #A6F16C 0%,  #62E200 100%);
 	width:100%;
 }
 
 .group{
-	background:#FF9C69;
+	background:linear-gradient( #FF7940 0%,  #FF4C00 100%);
 	-moz-border-radius: 15px;
 	border-radius: 15px;
 	padding-bottom:1px;
@@ -21,7 +21,7 @@
 }
 
 .case{
-	background:#81ACD9;
+	background:linear-gradient( #3F8FD2 0%,  #0B5FA5 100%);
 	-moz-border-radius: 15px;
 	border-radius: 15px;
 	padding-bottom:1px;
