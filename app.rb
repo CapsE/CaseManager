@@ -21,8 +21,9 @@ begin # Klassen definitionen der Datenbank elemente
 	end
 end
 
+#Funktion zum erstellen der Baumstrucktur
 def ParseElements group
-	@tree += "<div class='tree_group'><img class='identifier' src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
+	@tree += "<div class='tree_group' data-active='false'><img class='identifier' data-id=\"item_#{@id}\" src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
 	@tree += "  #{group.tags}"
 	@tree += "<a href='run/#{group.id}'><img class='control' src='Icons/play.png'></a>"
 	@tree += "<a href='groups/edit/#{group.id}'><img class='control' src='Icons/edit.png'></a>"
@@ -31,7 +32,7 @@ def ParseElements group
 	group.elements.split(",").each do |el|
 		if el[0] == "C"
 			c = Case.find(el[1..-1])
-			@tree += "<li class='tree_case'>#{c.tags}</li>"
+			@tree += "<li class='tree_case' data-active='false'>#{c.tags}</li>"
 		else
 			g = Group.find(el[1..-1])
 			ParseElements(g)
@@ -54,6 +55,11 @@ end
 
 get "/result" do
 	erb :result
+end
+
+#Downloads aus dem Ordner files ermöglichen
+get '/download/:filename' do |filename|
+  send_file "./files/#{filename}", :filename => filename, :type => 'Application/octet-stream'
 end
 
 helpers do

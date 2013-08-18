@@ -5,7 +5,7 @@
   <label for="post_id">ID:</label>
   <input id="post_id" name="post[id]" type="text" value="<%= @group.id %>" readonly size="5"/>
   <label for="post_title">Tags:</label>
-  <input id="post_title" name="post[tags]" type="text" value="default" size="77"/>
+  <input id="post_title" name="post[tags]" type="text" value="<%= @group.tags %>" size="77"/>
   <input id="post_elements" name="post[elements]" type="text" value="<%= @group.elements %>">
   <input id="post_level" name="post[level]" type="text" value="<%= @group.level %>">
   <br/>

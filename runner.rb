@@ -48,25 +48,26 @@ def runGroup group
 			$result = nil
 			$log = ""
 			c = Case.find(el[1..-1])
-			@tree += "<li class='tree_case'>#{c.tags}</li>"
+			@tree += "<li class='tree_case'>#{c.tags}  "
 			eval(c.code)
 			if $result == false
-				@tree += '<img class="control" src="Icons/fail.png">'
+				@tree += '<img class="result" src="Icons/fail.png">'
 			elsif $result == true
-				@tree += '<img class="control" src="Icons/check.png">'
+				@tree += '<img class="result" src="Icons/check.png">'
 			else
-				@tree += '<img class="control" src="Icons/unknown.png">'
+				@tree += '<img class="result" src="Icons/unknown.png">'
 			end
-			if $log 
+			if $log != ""
 				@tree += "<p><code class='log_case'>#{$log}</code>"
 			end
+			@tree += "</li>"
 		else
 			g = Group.find(el[1..-1])
 			runGroup(g)
 		end
 	end
 	@tree += "</ul>"
-	File.open("views/result.erb", 'a') { |file| file.write(@tree) }
+	File.open("views/result.erb", 'w') { |file| file.write(@tree) }
 end
 
 #*****************************************************************************************************************

@@ -1,8 +1,10 @@
 <div id="groups" style="float:left; width:45%">
 <h2>Groups</h2>
-
+<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
+<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a>
+<div id="groups_tree" style="float:left; width:45%" onclick='Activate(event)'>
 <%= @tree %>
-</div>
+</div></div>
 <div id="cases" style="float:left; width:48%">
 <h2>Cases</h2>
 <% @caseses.each do |c| %>

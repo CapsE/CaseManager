@@ -1,5 +1,5 @@
 def Log text
-	$log += "<code>#{text}</code><p>"
+	$log += "#{text}"
 end
 
 def SetResult bool
@@ -22,4 +22,18 @@ def Exists a
 	else
 		SetResult(false)
 	end
+end
+
+def WriteFile name, content
+	File.open("files/#{name}", 'w') { |file| file.write(content) }
+	SetResult(true)
+	return name
+end
+
+def DownloadLink file, name = nil
+	if name == nil
+		name = file
+	end
+	SetResult(true)
+	Log("<a href='/download/#{file}'>#{name}</a>")
 end

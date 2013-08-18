@@ -1,11 +1,11 @@
-<h2>Create Case</h2>
+<h2>Edit Case</h2>
 <br/>
 <div class="case">
 <form action="/caseses/edit" method="post">
   <label for="post_id">ID:</label>
   <input id="post_id" name="post[id]" type="text" value="<%= @case.id %>" readonly size="5"/>
   <label for="post_title">Tags:</label><br>
-  <input id="post_title" name="post[tags]" type="text" value="<%= @case.tags %>" size="77"/>
+  <input id="post_title" name="post[tags]" type="text" value="<%= @case.tags %>" size="77"/><br>
   <label for="post_comment">Beschreibung:</label><br>
   <textarea id="post_comment" name="post[comment]" rows="10"><%= @case.comment %></textarea>
   <br/>

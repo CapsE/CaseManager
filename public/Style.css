@@ -6,8 +6,30 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
+code{
+	border:dashed;
+	border-width:1px;
+	padding:5px;
+}
+
+.button{
+	background:#3F8FD2;
+	color:#FFB540;
+	padding:3px;
+	cursor:pointer;
+	display:inline;
+	border:solid;
+	border-width:1px;
+	border-color:black;
+}
+
 .control{
 	display:inline-block;
+	width:15px;
+	height:15px;
+}
+
+.result{
 	width:15px;
 	height:15px;
 }
@@ -22,18 +44,28 @@ li{
 	font-style:oblique;
 }
 
+.tree_active{
+	border:solid;
+	border-width:1px;
+	border-color:blue;
+	background:lightblue;
+}
+
 .MItem{
-	padding-right:5px;
-	padding-left:5px;
+	font-size:24px;
+	padding:5px;
+	margin:5px;
+	color:inherit;
 }
 
 .navigation{
-	background:linear-gradient( #A6F16C 0%,  #62E200 100%);
+	background:linear-gradient( #3F8FD2 0%, #0B5FA5 100%);
+	color:#FFB540;
 	width:100%;
 }
 
 .group{
-	background:linear-gradient( #FF7940 0%,  #FF4C00 100%);
+	background:linear-gradient( #FF7940 0%, #FF4C00 100%);
 	-moz-border-radius: 15px;
 	border-radius: 15px;
 	padding-bottom:1px;
@@ -45,7 +77,7 @@ li{
 }
 
 .case{
-	background:linear-gradient( #3F8FD2 0%,  #0B5FA5 100%);
+	background:linear-gradient( #3F8FD2 0%, #0B5FA5 100%);
 	-moz-border-radius: 15px;
 	border-radius: 15px;
 	padding-bottom:1px;
@@ -58,11 +90,4 @@ li{
 .myButton{
 	color:#4A941F;
 	cursor:pointer;
-}
-
-.result{
-	width:40px;
-	height:20px;
-	float:right;
-	margin:10px;
 }
