@@ -22,18 +22,22 @@ begin # Klassen definitionen der Datenbank elemente
 end
 
 def ParseElements group
-	@tree += "<h4 class='group' onclick='Toggle(\"item_#{@id}\")'>#{group.tags}</h4><ul id='item_#{@id}'>"
+	@tree += "<div class='tree_group'><img class='identifier' src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
+	@tree += "  #{group.tags}"
+	@tree += "<a href='run/#{group.id}'><img class='control' src='Icons/play.png'></a>"
+	@tree += "<a href='groups/edit/#{group.id}'><img class='control' src='Icons/edit.png'></a>"
+	@tree += "<ul id='item_#{@id}'>"
 	@id +=1
 	group.elements.split(",").each do |el|
 		if el[0] == "C"
 			c = Case.find(el[1..-1])
-			@tree += "<li class='case'>#{c.tags}</li>"
+			@tree += "<li class='tree_case'>#{c.tags}</li>"
 		else
 			g = Group.find(el[1..-1])
 			ParseElements(g)
 		end
 	end
-	@tree += "</ul>"
+	@tree += "</ul></div>"
 end
 
 get "/" do

@@ -7,6 +7,8 @@ get "/run/:id" do
 	@group = Group.find(params[:id])
 	@title = "Waiting..."
 	@var = 0
+	@tree = ""
+	@id = 0	
 	
 	def SearchInput group
 		group.elements.split(",").each do |el|
@@ -36,32 +38,35 @@ end
 # Führt der Reihe nach alle Elemente von "group" aus. Ist ein Element selbst eine Gruppe wird die Funktion 
 # rekursiv aufgerufen.
 #*****************************************************************************************************************
-
 def runGroup group
-	@html += '<div class="group"><h2>#' + group.id.to_s + " " + group.tags + "</h2>"
+	@tree += "<div class='tree_group'><img class='identifier' src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
+	@tree += "  #{group.tags}<div>"
+	@tree += "</div><ul id='item_#{@id}'>"
+	@id +=1
 	group.elements.split(",").each do |el|
 		if el[0] == "C"
 			$result = nil
 			$log = ""
 			c = Case.find(el[1..-1])
-			@html += '<div class="case">#' + el[1..-1] + ' ' + c.tags
+			@tree += "<li class='tree_case'>#{c.tags}</li>"
 			eval(c.code)
 			if $result == false
-				@html += '<div class="result" style="background:red"></div>'
+				@tree += '<img class="control" src="Icons/fail.png">'
 			elsif $result == true
-				@html += '<div class="result"style="background:green"></div>'
+				@tree += '<img class="control" src="Icons/check.png">'
 			else
-				@html += '<div class="result"style="background:grey"></div>'
+				@tree += '<img class="control" src="Icons/unknown.png">'
 			end
-			@html += "<p>" + $log
-			@html += "</div>"
+			if $log 
+				@tree += "<p><code class='log_case'>#{$log}</code>"
+			end
 		else
 			g = Group.find(el[1..-1])
 			runGroup(g)
 		end
 	end
-	@html += "</div><br>"
-	File.open("views/result.erb", 'a') { |file| file.write(@html) }
+	@tree += "</ul>"
+	File.open("views/result.erb", 'a') { |file| file.write(@tree) }
 end
 
 #*****************************************************************************************************************
@@ -83,7 +88,8 @@ post "/run" do
 	$log = ""
 	
 	File.open("views/result.erb", 'w') { |file| file.write("<h1>Result</h1>") }
-	@html = ""
+	@tree = ""
+	@id = 0
 	runGroup(@group)
 	redirect "/result"
 end
@@ -100,7 +106,8 @@ get "/runwo/:id" do
 	$log = ""
 	
 	File.open("views/result.erb", 'w') { |file| file.write("<h1>Result</h1>") }
-	@html = ""
+	@tree = ""
+	@id = 0
 	runGroup(@group)
 	redirect "/result"
 end

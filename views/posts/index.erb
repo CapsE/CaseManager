@@ -1,9 +1,9 @@
-<div id="groups" style="float:left; width:50%">
-<h2>Gruppen</h2>
+<div id="groups" style="float:left; width:45%">
+<h2>Groups</h2>
 
 <%= @tree %>
 </div>
-<div id="cases" style="float:left; width:50%">
+<div id="cases" style="float:left; width:48%">
 <h2>Cases</h2>
 <% @caseses.each do |c| %>
   <div class="case">
@@ -13,17 +13,3 @@
   </div>
 <% end %>
 </div>
-
-<Script>
-function Toggle(id){
-	var childs = document.getElementById(id).childNodes;
-	for(var i = 0; i < childs.length; i++){
-		console.debug(childs[i]);
-		if(childs[i].style.display == "none"){
-			childs[i].style.display = "block";
-		}else{
-			childs[i].style.display = "none";
-		}
-	}
-}
-</Script>

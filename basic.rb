@@ -15,3 +15,11 @@ def Equal a,b
 		SetResult(false)
 	end
 end
+
+def Exists a
+	if a != nil
+		SetResult(true)
+	else
+		SetResult(false)
+	end
+end
