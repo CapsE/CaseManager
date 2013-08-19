@@ -1,3 +1,9 @@
+body{
+	padding:0px;
+	margin:0px;
+	width:99%;
+}
+
 ul{
 	list-style-image: url('Icons/dots.png');
 }
@@ -6,16 +12,22 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
-code{
+.code{
+	font:1em/160% Courier;
 	border:dashed;
 	border-width:1px;
 	padding:5px;
+	width:95%;
+	background:#FFF8EF;
 }
 
 .button{
 	background:#3F8FD2;
 	color:#FFB540;
 	padding:3px;
+	padding-left:4px;
+	padding-right:4px;
+	margin:2px;
 	cursor:pointer;
 	display:inline;
 	border:solid;
@@ -62,6 +74,7 @@ code{
 	background:linear-gradient( #3F8FD2 0%, #0B5FA5 100%);
 	color:#FFB540;
 	width:100%;
+	padding:5px;
 }
 
 .group{
@@ -77,10 +90,9 @@ code{
 }
 
 .case{
-	background:linear-gradient( #3F8FD2 0%, #0B5FA5 100%);
-	-moz-border-radius: 15px;
-	border-radius: 15px;
+	background:#FFC473;
 	padding-bottom:1px;
+	margin-bottom:4px;
 	padding-left:10px;
 	border:solid;
 	border-width:1px;

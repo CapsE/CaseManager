@@ -21,9 +21,9 @@
 </div>
 <div id="cases" style="float:left; width:50%">
 <h2>Cases</h2>
-<% @caseses.each do |c| %>
+<% @cases.each do |c| %>
   <div class="case">
-    <h4><a href="/caseses/edit/<%= c.id %>"><%= "##{c.id} #{c.tags}" %></a></h4>
+    <h4><a href="/cases/edit/<%= c.id %>"><%= "##{c.id} #{c.tags}" %></a></h4>
 	<p><code><%= c.code %></code>
     <p>Created: <%= c.created_at %></p>
   </div>

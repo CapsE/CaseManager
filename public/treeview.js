@@ -1,3 +1,4 @@
+var hidden = false;
 
 function Toggle(event, id){
 	var childs = document.getElementById(id).childNodes;
@@ -32,27 +33,33 @@ function Activate(event){
 }
 
 function HideAll(){
-	var img = document.getElementsByTagName("img");
-	for(var i = 0; i < img.length; i++){
-		if(img[i].className == "identifier"){
-			var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
-			for(var h = 0; h < childs.length; h++){			
-				childs[h].dataset.disp = childs[h].style.display;
-				childs[h].style.display = "none";
-				img[i].src = "Icons/show.png";
+	if(hidden == false){
+		hidden = true;
+		var img = document.getElementsByTagName("img");
+		for(var i = 0; i < img.length; i++){
+			if(img[i].className == "identifier"){
+				var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
+				for(var h = 0; h < childs.length; h++){			
+					childs[h].dataset.disp = childs[h].style.display;
+					childs[h].style.display = "none";
+					img[i].src = "Icons/show.png";
+				}
 			}
 		}
 	}
 }
 
 function ShowAll(){
-	var img = document.getElementsByTagName("img");
-	for(var i = 0; i < img.length; i++){
-		if(img[i].className == "identifier"){
-			var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
-			for(var h = 0; h < childs.length; h++){			
-				childs[h].style.display = childs[h].dataset.disp;
-				img[i].src = "Icons/hide.png";
+	if(hidden == true){
+		hidden = false;
+		var img = document.getElementsByTagName("img");
+		for(var i = 0; i < img.length; i++){
+			if(img[i].className == "identifier"){
+				var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
+				for(var h = 0; h < childs.length; h++){			
+					childs[h].style.display = childs[h].dataset.disp;
+					img[i].src = "Icons/hide.png";
+				}
 			}
 		}
 	}

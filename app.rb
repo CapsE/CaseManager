@@ -23,7 +23,7 @@ end
 
 #Funktion zum erstellen der Baumstrucktur
 def ParseElements group
-	@tree += "<div class='tree_group' data-active='false'><img class='identifier' data-id=\"item_#{@id}\" src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
+	@tree += "<div class='tree_group' data-active='false' id='#{group.tags}'><img class='identifier' data-id=\"item_#{@id}\" src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
 	@tree += "  #{group.tags}"
 	@tree += "<a href='run/#{group.id}'><img class='control' src='Icons/play.png'></a>"
 	@tree += "<a href='groups/edit/#{group.id}'><img class='control' src='Icons/edit.png'></a>"
@@ -48,7 +48,8 @@ get "/" do
 	@groups.each do |group|
 		ParseElements(group) 
 	end
-	@caseses = Case.order("created_at DESC")
+	@cases = Case.order("created_at DESC")
+	@cases = @cases.sort_by &:tags
 	@title = "Welcome."
 	erb :"posts/index"
 end
@@ -74,26 +75,26 @@ end
 
 begin # Erstellen von Caseses und Groups
 	# Interface Caseses
-	get "/caseses/create" do
+	get "/cases/create" do
 		@title = "Create Case"
 		@case = Case.new
-		erb :"caseses/create"
+		erb :"cases/create"
 	end
 	
 	# In die Datenbank ablegen
-	post "/caseses" do
+	post "/cases" do
 		@case = Case.new(params[:post])
 		if @case.save
 			redirect "/"
 		else
-			redirect "caseses/create", :error => 'Something went wrong. Try again.'
+			redirect "cases/create", :error => 'Something went wrong. Try again.'
 		end
 	end
 	
 	# Interface Groups
 	get "/groups/create" do
 		@groups = Group.order("created_at DESC")
-		@caseses = Case.order("created_at DESC")
+		@cases = Case.order("created_at DESC")
 		@title = "Create Group"
 		@group = Group.new
 		erb :"groups/create"
@@ -115,19 +116,19 @@ end
 begin # Editieren von Caseses und Groups
 	
 	# Interface Case editieren
-	get "/caseses/edit/:id" do
+	get "/cases/edit/:id" do
 		@title = "Edit Case"
 		@case = Case.find(params[:id])
-		erb:"caseses/edit"
+		erb:"cases/edit"
 	end
 	
 	# In die Datenbak eintragen
-	post "/caseses/edit" do
+	post "/cases/edit" do
 		@case = Case.update(params[:post][:id], params[:post])
 		 if @case.save
 			redirect "/"
 		  else
-			redirect "/caseses/edit/#{params[:id]}", :error => 'Something went wrong. Try again.'
+			redirect "/cases/edit/#{params[:id]}", :error => 'Something went wrong. Try again.'
 		  end
 	end
 	
@@ -135,7 +136,7 @@ begin # Editieren von Caseses und Groups
 	get "/groups/edit/:id" do
 		@title = "Edit Groups"
 		@groups = Group.order("created_at DESC")
-		@caseses = Case.order("created_at DESC")
+		@cases = Case.order("created_at DESC")
 		@group = Group.find(params[:id])
 		erb:"groups/edit"
 	end
@@ -154,7 +155,7 @@ end
 begin # Löschen von Cases und Groups
 
 	# Delete Case
-	get "/caseses/delete/:id" do
+	get "/cases/delete/:id" do
 		Case.delete(params[:id])
 		redirect "/"
 	end

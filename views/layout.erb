@@ -4,13 +4,15 @@
     <title><%= title %></title>
     <link href="/Style.css" rel="stylesheet">
 	<script src="/treeview.js" type="text/javascript"></script>
+	<script src="/search.js" type="text/javascript"></script>
   </head>
   <body>
     <div class="navigation">
-		<a class="MItem" href="/"><img src="icon.svg"></img></a>
+		<a class="MItem" href="/"><img src="/icon.svg"></img></a>
 		<a class="MItem" href="/">Home</a>
-		<a class="MItem" href="/caseses/create">New Case</a>
+		<a class="MItem" href="/cases/create">New Case</a>
 		<a class="MItem" href="/groups/create">New Group</a>
+		<input type="text" id="suche" placeholder = "Suche" OnKeyUp="SearchCases()" onblur="ClearSearch()" style="float:right; width:25%;"/><br>
     </div>
     <div class="container">
       <% if flash[:notice] %>

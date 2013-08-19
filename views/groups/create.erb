@@ -38,7 +38,7 @@
 <% end %>
 
 	<h2>Cases</h2>
-	<% @caseses.each do |c| %>
+	<% @cases.each do |c| %>
 	  <div class="case">
 		<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
 		<p><code><%= c.code %></code>
