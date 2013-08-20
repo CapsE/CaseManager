@@ -29,11 +29,17 @@ function SearchCases(){
 }
 
 function GlobalSearch(event){
-	document.getElementById("suche").focus();
+	if(typeof document.activeElement.value === "undefined"){
+		document.getElementById("suche").style.position = "fixed";
+		document.getElementById("suche").style.right = "10px";
+		
+		document.getElementById("suche").focus();
+	}
 }
 
 function ClearSearch(){
 	document.getElementById("suche").value = "";
+	document.getElementById("suche").style.position = "relative";
 }
 
 window.addEventListener('keydown', GlobalSearch,true);

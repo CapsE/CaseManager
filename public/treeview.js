@@ -1,5 +1,3 @@
-var hidden = false;
-
 function Toggle(event, id){
 	var childs = document.getElementById(id).childNodes;
 	if(typeof event.target !== "undefined"){
@@ -11,11 +9,11 @@ function Toggle(event, id){
 	for(var i = 0; i < childs.length; i++){
 		if(childs[i].style.display == "none"){
 			childs[i].style.display = childs[i].dataset.disp;
-			sender.src = "Icons/hide.png";
+			sender.src = "/Icons/hide.png";
 		}else{
 			childs[i].dataset.disp = childs[i].style.display;
 			childs[i].style.display = "none";
-			sender.src = "Icons/show.png";
+			sender.src = "/Icons/show.png";
 		}
 	}
 }
@@ -33,16 +31,15 @@ function Activate(event){
 }
 
 function HideAll(){
-	if(hidden == false){
-		hidden = true;
-		var img = document.getElementsByTagName("img");
-		for(var i = 0; i < img.length; i++){
-			if(img[i].className == "identifier"){
-				var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
-				for(var h = 0; h < childs.length; h++){			
+	var img = document.getElementsByTagName("img");
+	for(var i = 0; i < img.length; i++){
+		if(img[i].className == "identifier"){
+			var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
+			for(var h = 0; h < childs.length; h++){			
+				if(childs[h].style.display != "none"){
 					childs[h].dataset.disp = childs[h].style.display;
 					childs[h].style.display = "none";
-					img[i].src = "Icons/show.png";
+					img[i].src = "/Icons/show.png";
 				}
 			}
 		}
@@ -50,15 +47,14 @@ function HideAll(){
 }
 
 function ShowAll(){
-	if(hidden == true){
-		hidden = false;
-		var img = document.getElementsByTagName("img");
-		for(var i = 0; i < img.length; i++){
-			if(img[i].className == "identifier"){
-				var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
-				for(var h = 0; h < childs.length; h++){			
+	var img = document.getElementsByTagName("img");
+	for(var i = 0; i < img.length; i++){
+		if(img[i].className == "identifier"){
+			var childs = document.getElementById(img[i].getAttribute("data-id")).childNodes;
+			for(var h = 0; h < childs.length; h++){		
+				if(childs[h].style.display == "none"){				
 					childs[h].style.display = childs[h].dataset.disp;
-					img[i].src = "Icons/hide.png";
+					img[i].src = "/Icons/hide.png";
 				}
 			}
 		}

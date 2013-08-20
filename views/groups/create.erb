@@ -1,6 +1,6 @@
+<div class="" style="float:left; width:49%; padding:5px; position:fixed; top:100px; left:5px;">
 <h2>Create Group</h2>
 <br/>
-<div class="group" style="float:left; width:50%; padding:5px; background:#FFC8AD; position:fixed; top:100px; left:5px;">
 <form id="groupForm" action="/groups" method="post">
   <label for="post_title">Tags:</label>
   <input id="post_title" name="post[tags]" type="text" value="default" size="77"/>
@@ -17,38 +17,53 @@
 </form> 
 </div>
 <div style="float:right; width:49%">
-	<h2>Gruppen</h2>
-	<% @groups.each do |group| %>
-    <div class="group">
-	<h4><a id="<%= group.id %>" class="myButton" onclick="AddMe(event)" data-level="<%= group.level %>" ><%= "<< ##{group.id} #{group.tags}" %></a></h4>
-	<ul>
-		<% if group.elements
-		group.elements.split(",").each do |rela| 
-			if rela[0] == "C"
-				c = Case.find(rela[1..-1])
-			else
-				c = Group.find(rela[1..-1])
-			end%>
-			<li><%= "#" + rela[0] + c.id.to_s + " " + c.tags%></li>
-		<% end
-		end %>
-	</ul>
-    <p>Created: <%= group.created_at %></p>
+	<div>
+		<img id="img_groupToggle" src="/Icons/Hide.png" onclick="ToggleGroups()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Groups</h2>
+		<div id="group_list">
+			<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
+			<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a><br>
+			<div id="groups_tree">
+				<%= @tree %>
+			</div>
+		</div>
+	</div><br>
+	
+	<div>
+	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
+		<div id="case_list">
+			<% @cases.each do |c| %>
+			  <div class="case" id="<%= c.tags %>">
+				<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
+				<p><code class="code"><%= c.code %></code>
+				<p>Created: <%= c.created_at %></p>
+			  </div>
+			<% end %>
+		</div>
 	</div>
-<% end %>
-
-	<h2>Cases</h2>
-	<% @cases.each do |c| %>
-	  <div class="case">
-		<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
-		<p><code><%= c.code %></code>
-		<p>Created: <%= c.created_at %></p>
-	  </div>
-	<% end %>
 </div>
-
 <script>
+	GetDivs();
+	HideAll();
 	var objects = [];
+	
+	function ToggleGroups(){
+		if(document.getElementById("group_list").style.display != "none"){
+			document.getElementById("group_list").style.display = "none";
+			document.getElementById("img_groupToggle").src = "/Icons/Show.png";
+		}else{
+			document.getElementById("group_list").style.display = "inline";
+			document.getElementById("img_groupToggle").src = "/Icons/Hide.png";
+		}
+	}
+	function ToggleCases(){
+		if(document.getElementById("case_list").style.display != "none"){
+			document.getElementById("case_list").style.display = "none";
+			document.getElementById("img_caseToggle").src = "/Icons/Show.png";
+		}else{
+			document.getElementById("case_list").style.display = "inline";
+			document.getElementById("img_caseToggle").src = "/Icons/Hide.png";
+		}
+	}
 	
 	function update(){
 		var max = 0;
@@ -68,25 +83,27 @@
 		document.getElementById("post_level").value = parseInt(max) +1;
 	}
 	
-	function AddMe(event){
+	function AddMe(id, group){
+		var target = document.getElementById(id);
 		var obj = document.createElement('div');
-		obj.id = event.target.id;
-		obj.setAttribute("class", event.target.parentNode.parentNode.className);
-		if(event.target.parentNode.parentNode.className == "group"){
-			document.getElementById("post_elements").value += ",G" + event.target.id;
-			obj.dataset.id = "G" + event.target.id;
+		obj.id = target.dataset.addid;
+		
+		if(group == true){
+			obj.setAttribute("class", "group");
+			document.getElementById("post_elements").value += "," + target.dataset.addid;
+			obj.dataset.id = target.dataset.id;
 		}else{
-			document.getElementById("post_elements").value += ",C" + event.target.id;
-			obj.dataset.id = "C" + event.target.id;		
+			obj.setAttribute("class", "case");
+			document.getElementById("post_elements").value += "," + target.dataset.addid;
+			obj.dataset.id = target.dataset.addid;		
 		}
-		obj.dataset.level = event.target.dataset.level;
-		obj.setAttribute("onclick", "RemoveMe(event)");
-		obj.innerHTML = event.target.innerHTML.substr(9) + " >>";
-		obj.style.color = "#A62222";
-		obj.style.cursor = "pointer";
+		//obj.dataset.level = target.dataset.level;
+		//obj.setAttribute("onclick", "RemoveMe(event)");
+		//obj.innerHTML = target.innerHTML;
+		//obj.style.color = "#A62222";
+		//obj.style.cursor = "pointer";
 		document.getElementById("holder").appendChild(obj);
-		update();
-		//
+		//update();
 	}
 	
 	function RemoveMe(event){

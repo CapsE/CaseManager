@@ -14,10 +14,10 @@
   <div id="holder">
 	<% @group.elements.split(",").each do |el|
 		if el[0] == "C"
-			classname = "case"
+			classname = "case_edit"
 			c = Case.find(el[1..-1])
 		else
-			classname = "group"
+			classname = "group_edit"
 			c = Group.find(el[1..-1])
 		end%>
 		<div id="<%= el[1..-1] %>" class="<%= classname %>" data-id="<%= el %>" onclick="RemoveMe(event)" style="color:#A62222; cursor:pointer;">#<%= el[1..-1] %> <%= c.tags %> >> </div>
@@ -31,7 +31,7 @@
 <div style="float:right; width:49%">
 	<h2>Gruppen</h2>
 	<% @groups.each do |group| %>
-    <div class="group">
+    <div class="tree_group" id="<%= group.tags %>">
 	<h4><a id="<%= group.id %>" class="myButton" onclick="AddMe(event)" data-level="<%= group.level %>" ><%= "<< ##{group.id} #{group.tags}" %></a></h4>
 	<ul>
 		<% if group.elements
@@ -51,7 +51,7 @@
 
 	<h2>Cases</h2>
 	<% @cases.each do |c| %>
-	  <div class="case">
+	  <div class="case" id="<%= c.tags %>">
 		<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
 		<p><code><%= c.code %></code>
 		<p>Created: <%= c.created_at %></p>
@@ -60,6 +60,7 @@
 </div>
 
 <script>
+	GetDivs();
 	var objects = [];
 	
 	function update(){

@@ -22,11 +22,13 @@ begin # Klassen definitionen der Datenbank elemente
 end
 
 #Funktion zum erstellen der Baumstrucktur
-def ParseElements group
-	@tree += "<div class='tree_group' data-active='false' id='#{group.tags}'><img class='identifier' data-id=\"item_#{@id}\" src='Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
+def ParseElements group, elements
+	@tree += "<div class='tree_group' data-active='false' data-addid='G#{group.id}' id='#{group.tags}'><img class='identifier' data-id=\"item_#{@id}\" src='/Icons/hide.png' onclick='Toggle(event, \"item_#{@id}\")'>"
 	@tree += "  #{group.tags}"
-	@tree += "<a href='run/#{group.id}'><img class='control' src='Icons/play.png'></a>"
-	@tree += "<a href='groups/edit/#{group.id}'><img class='control' src='Icons/edit.png'></a>"
+	elements.each do |el|
+		el = el.tr("$","#")
+		@tree += eval('"' + el + '"')
+	end
 	@tree += "<ul id='item_#{@id}'>"
 	@id +=1
 	group.elements.split(",").each do |el|
@@ -35,7 +37,7 @@ def ParseElements group
 			@tree += "<li class='tree_case' data-active='false'>#{c.tags}</li>"
 		else
 			g = Group.find(el[1..-1])
-			ParseElements(g)
+			ParseElements(g, elements)
 		end
 	end
 	@tree += "</ul></div>"
@@ -45,8 +47,9 @@ get "/" do
 	@groups = Group.order("created_at DESC")
 	@tree = ""
 	@id = 0
+	elements = ["<a href='/run/${group.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${group.id}'><img class='control' src='/Icons/edit.png'></a>"]
 	@groups.each do |group|
-		ParseElements(group) 
+		ParseElements(group, elements) 
 	end
 	@cases = Case.order("created_at DESC")
 	@cases = @cases.sort_by &:tags
@@ -94,6 +97,12 @@ begin # Erstellen von Caseses und Groups
 	# Interface Groups
 	get "/groups/create" do
 		@groups = Group.order("created_at DESC")
+		@tree = ""
+		@id = 0
+		elements = ["<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe(\"${group.tags}\", true)'>"]
+		@groups.each do |group|
+			ParseElements(group, elements) 
+		end
 		@cases = Case.order("created_at DESC")
 		@title = "Create Group"
 		@group = Group.new
