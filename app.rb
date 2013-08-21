@@ -27,6 +27,9 @@ def ParseElements group, elements
 	@tree += "  #{group.tags}"
 	elements.each do |el|
 		el = el.tr("$","#")
+		puts "--------------------------------------------------"
+		puts eval('"' + el + '"')
+		puts "--------------------------------------------------"
 		@tree += eval('"' + el + '"')
 	end
 	@tree += "<ul id='item_#{@id}'>"
@@ -99,7 +102,7 @@ begin # Erstellen von Caseses und Groups
 		@groups = Group.order("created_at DESC")
 		@tree = ""
 		@id = 0
-		elements = ["<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe(\"${group.tags}\", true)'>"]
+		elements = ["<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe(\\\"${group.tags}\\\", true)'></img>"]
 		@groups.each do |group|
 			ParseElements(group, elements) 
 		end

@@ -32,10 +32,13 @@
 	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
 		<div id="case_list">
 			<% @cases.each do |c| %>
-			  <div class="case" id="<%= c.tags %>">
-				<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
-				<p><code class="code"><%= c.code %></code>
-				<p>Created: <%= c.created_at %></p>
+			  <div class='case' data-active='false' data-addid='<%="C#{c.id}" %>' id='<%= "#{c.tags}" %>'>
+				<%= "#{c.tags}" %>
+				<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe("<%= c.tags %>", false)'></img>
+				<div>
+					<p><code class="code"><%= c.code %></code>
+					<p>Created: <%= c.created_at %></p>
+				</div>
 			  </div>
 			<% end %>
 		</div>
@@ -44,6 +47,7 @@
 <script>
 	GetDivs();
 	HideAll();
+	var lastItem = 0;
 	var objects = [];
 	
 	function ToggleGroups(){
@@ -86,28 +90,29 @@
 	function AddMe(id, group){
 		var target = document.getElementById(id);
 		var obj = document.createElement('div');
-		obj.id = target.dataset.addid;
+		obj.dataset.id = target.dataset.addid;		
 		
 		if(group == true){
-			obj.setAttribute("class", "group");
+			obj.setAttribute("class", "tree_group");
 			document.getElementById("post_elements").value += "," + target.dataset.addid;
-			obj.dataset.id = target.dataset.id;
 		}else{
 			obj.setAttribute("class", "case");
-			document.getElementById("post_elements").value += "," + target.dataset.addid;
-			obj.dataset.id = target.dataset.addid;		
+			document.getElementById("post_elements").value += "," + target.dataset.addid;	
 		}
 		//obj.dataset.level = target.dataset.level;
-		//obj.setAttribute("onclick", "RemoveMe(event)");
-		//obj.innerHTML = target.innerHTML;
-		//obj.style.color = "#A62222";
-		//obj.style.cursor = "pointer";
+		obj.innerHTML = target.innerHTML;
+		inner = obj.children;
+		for(var i = 0; i < inner.length; i++){
+				obj.removeChild(inner[i]);
+		}
+		obj.children[0].src = "/Icons/delete.png";
+		obj.children[0].setAttribute("onclick", "RemoveMe(event)");
 		document.getElementById("holder").appendChild(obj);
-		//update();
+		update();
 	}
 	
 	function RemoveMe(event){
-		document.getElementById("holder").removeChild(event.target);
+		document.getElementById("holder").removeChild(event.target.parentNode);
 		update();
 	}
 </script>
