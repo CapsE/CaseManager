@@ -49,11 +49,37 @@ def runGroup group
 			$log = ""
 			c = Case.find(el[1..-1])
 			@tree += "<li class='tree_case'>#{c.tags}  "
-			eval(c.code)
-			if $result == false
+			#Ausführen des eigengebenen Codes
+			@runtime = 60
+			a = Thread.new{
+				begin
+					eval(c.code)
+				rescue
+					$result = "crash"
+				end
+			}
+			sleep 0.001
+			if @runtime != nil
+				stopTime = Time.now + @runtime
+				while a.alive? && Time.now <= stopTime		
+				end
+				if a.alive?
+					$result = "time"
+				end
+			else
+				while a.alive?		
+				end
+			end
+			Thread.kill(a)	
+			
+			if $result == "false"
 				@tree += '<img class="result" src="Icons/fail.png">'
-			elsif $result == true
+			elsif $result == "true"
 				@tree += '<img class="result" src="Icons/check.png">'
+			elsif $result == "time"
+				@tree += '<img class="result" src="Icons/time.png">'
+			elsif $result == "crash"
+				@tree += '<img class="result" src="Icons/crash.png">'
 			else
 				@tree += '<img class="result" src="Icons/unknown.png">'
 			end

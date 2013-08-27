@@ -3,8 +3,12 @@ def Log text
 end
 
 def SetResult bool
-	if $result != false
-		$result = bool
+	if $result != "false"
+		if bool
+			$result = "true"
+		else
+			$result = "false"
+		end
 	end
 end
 
