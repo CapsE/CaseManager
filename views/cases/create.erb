@@ -12,8 +12,20 @@
   <input id="post_input" name="post[input]" type="text" value="<%= @case.input %>" size="150"/>
   <br/>
   <label for="post_body">Code:</label><br>
-  <textarea id="post_body" name="post[code]" rows="10" Style="width:95%;"><%= @case.code %></textarea>
+  <textarea id="post_code" name="post[code]" rows="10" Style="width:95%; display:none;"><%= @case.code %></textarea>
+  <div id="editor" style="width:100%; height:280px;"><%= @case.code %></div>
   <br />
   <input type="submit" value="Create!"/>
 </form> 
 </div>
+<script src="/src/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.getSession().setMode("ace/mode/ruby");
+	editor.resize();
+	
+	editor.getSession().on('change', function(e) {
+		document.getElementById("post_code").value = editor.getSession().getValue();
+	});
+</script>
