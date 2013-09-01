@@ -12,6 +12,11 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
+.tooltip{
+	border:solid;
+	border-width:1px;
+}
+
 .code{
 	font:1em/160% Courier;
 	border:dashed;

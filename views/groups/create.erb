@@ -1,4 +1,4 @@
-<div class="" style="float:left; width:49%; padding:5px; position:fixed; top:100px; left:5px;">
+<div class="" style="float:left; width:98%; padding:5px;">
 <h2>Create Group</h2>
 <br/>
 <form id="groupForm" action="/groups" method="post">
@@ -6,17 +6,16 @@
   <input id="post_title" name="post[tags]" type="text" value="default" size="77"/>
   <input id="post_elements" name="post[elements]" type="text" value="">
   <input id="post_level" name="post[level]" type="text" value="1">
-  <br/>
-  <br/>
+
+</form> 
   <label for="post_body">Inhalt:</label><br>
   <div id="holder">
   
   </div>
   <br />
-  <input type="submit" value="Create!"/>
-</form> 
+  <input type="submit" value="Create!" onclick="SubmitForm()"/>
 </div>
-<div style="float:right; width:49%">
+<div style="float:right; width:20%">
 	<div>
 		<img id="img_groupToggle" src="/Icons/Hide.png" onclick="ToggleGroups()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Groups</h2>
 		<div id="group_list">
@@ -32,23 +31,53 @@
 	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
 		<div id="case_list">
 			<% @cases.each do |c| %>
-			  <div class='case' data-active='false' data-addid='<%="C#{c.id}" %>' id='<%= "#{c.tags}" %>'>
+			  <div class='case' data-active='false' data-addid='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{c.tags}" %>' OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()">
 				<%= "#{c.tags}" %>
 				<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe("<%= c.tags %>", false)'></img>
-				<div>
-					<p><code class="code"><%= c.code %></code>
-					<p>Created: <%= c.created_at %></p>
-				</div>
 			  </div>
 			<% end %>
 		</div>
 	</div>
 </div>
+
+<div id="tooltip" class="tooltip" style="display:none; position:fixed; top:200px; left:100px; width:50%; height:400px;">
+	<textarea id="tooltip-desc" style="width:98%;"></textarea>
+	<div id="tooltip-code" style="position:relative; width:98%; height:300px;"></div>
+</div>
+
+<script src="/src/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
 	GetDivs();
 	HideAll();
 	var lastItem = 0;
 	var objects = [];
+	
+	function ShowTooltip(event){
+		var tooltip = document.getElementById("tooltip");
+		tooltip.style.display = "inline";
+		if(event.target.dataset.desc != ""){
+			document.getElementById("tooltip-desc").style.display = "inline";
+			document.getElementById("tooltip-desc").value = event.target.dataset.desc;		
+		}else{
+			document.getElementById("tooltip-desc").style.display = "none";
+		}
+		var editor = ace.edit("tooltip-code");
+		editor.setTheme("ace/theme/chrome");
+		editor.getSession().setMode("ace/mode/ruby");
+		editor.setValue(event.target.dataset.code);
+		editor.setReadOnly(true);
+		var h = 400 - document.getElementById("tooltip-desc").style.height;
+		if(h > 100){
+			document.getElementById("tooltip-code").style.height = h;
+		}else{
+			document.getElementById("tooltip-code").style.height = 100;	
+		}
+		editor.resize();
+	}
+	
+	function HideTooltip(){
+		document.getElementById("tooltip").style.display = "none";
+	}
 	
 	function ToggleGroups(){
 		if(document.getElementById("group_list").style.display != "none"){
@@ -114,5 +143,9 @@
 	function RemoveMe(event){
 		document.getElementById("holder").removeChild(event.target.parentNode);
 		update();
+	}
+	
+	function SubmitForm(){
+		document.forms[0].submit();
 	}
 </script>
