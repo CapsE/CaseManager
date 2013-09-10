@@ -1,14 +1,18 @@
 <div id="groups" style="float:left; width:45%; margin:5px;">
-<h2>Groups</h2>
-<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
-<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a><br>
-<div id="groups_tree" style="float:left; width:45%">
-<%= @tree %>
-</div></div>
-<div id="cases" style="float:left; width:48%">
+	<h2>Groups</h2>
+	<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
+	<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a><br>
+
+	<div id="groups_tree" style="float:left; width:45%;">
+		<% @groups.each do |g| %>
+			<%= g.to_tree(@elements) %>
+		<% end %>
+	</div>
+</div>
+<div id="cases" style="float:right; width:48%">
 <h2>Cases</h2>
 <% @cases.each do |c| %>
-  <div class="case" id="<%= "#{c.tags}"%>">
+  <div class="case" id="<%= "#{c.tags}"%>" data-search='true' data-searchid="<%= "#{c.tags}"%>">
     <h4><a href="/cases/edit/<%= c.id %>"><%= "#{c.tags}" %></a></h4>
 	<p><div class="code"><%= c.code %></div>
     <p>Created: <%= c.created_at %></p>

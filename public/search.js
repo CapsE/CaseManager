@@ -3,7 +3,13 @@ var cases = [];
 function GetDivs(){
 	var divs = document.getElementsByTagName("div");
 	for(var i = 0; i < divs.length; i++){
-		if(divs[i].className == "case" || divs[i].className == "tree_group"){
+		if((divs[i].className == "case" || divs[i].className == "tree_group") && typeof(divs[i].dataset.searchid) !== "undefined") {
+			cases.push(divs[i]);
+		}
+	}
+	divs = document.getElementsByTagName("li");
+	for(var i = 0; i < divs.length; i++){
+		if((divs[i].className == "case" || divs[i].className == "tree_group")&& typeof(divs[i].dataset.searchid) !== "undefined") {
 			cases.push(divs[i]);
 		}
 	}
@@ -13,7 +19,7 @@ function SearchCases(){
 	var search = document.getElementById("suche").value;
 	
 	for(var i = 0; i < cases.length; i++){
-		if(cases[i].id.substr(0, search.length)  == search){
+		if(cases[i].dataset.searchid.substr(0, search.length)  == search){
 			if(cases[i].dataset.visible == "false"){
 				cases[i].style.display = "block";
 				cases[i].dataset.visible = true;

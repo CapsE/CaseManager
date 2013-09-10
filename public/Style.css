@@ -12,6 +12,12 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
+.dropZone{
+	width:100%;
+	background:lightblue;
+	text-align:center;
+}
+
 .tooltip{
 	border:solid;
 	border-width:1px;
@@ -40,10 +46,19 @@ li{
 	border-color:black;
 }
 
+.identifier{
+	float:left;
+	vertical-align:center;
+	height:10px;
+	width:10px;
+	margin:5px;
+}
+
 .control{
 	display:inline-block;
 	width:15px;
 	height:15px;
+	float:rigth;
 }
 
 .result{
@@ -102,4 +117,5 @@ li{
 	border:solid;
 	border-width:1px;
 	border-color:black;
+	display:block;
 }

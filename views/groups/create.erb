@@ -1,4 +1,4 @@
-<div class="" style="float:left; width:98%; padding:5px;">
+﻿<div class="" style="float:left; width:65%; padding:5px;">
 <h2>Create Group</h2>
 <br/>
 <form id="groupForm" action="/groups" method="post">
@@ -8,21 +8,23 @@
   <input id="post_level" name="post[level]" type="text" value="1">
 
 </form> 
-  <label for="post_body">Inhalt:</label><br>
-  <div id="holder">
-  
-  </div>
-  <br />
-  <input type="submit" value="Create!" onclick="SubmitForm()"/>
+	<label for="post_body">Inhalt:</label><br>
+	<div id="holder">
+		<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
+	</div>
+	<br />
+	<input type="submit" value="Create!" onclick="SubmitForm()"/>
 </div>
-<div style="float:right; width:20%">
+<div style="float:right; width:30%; height:800px; border:solid; padding-left:5px; overflow:scroll;">
 	<div>
 		<img id="img_groupToggle" src="/Icons/Hide.png" onclick="ToggleGroups()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Groups</h2>
 		<div id="group_list">
 			<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
 			<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a><br>
 			<div id="groups_tree">
-				<%= @tree %>
+				<% @groups.each do |g| %>
+					<%= g.to_tree(@elements) %>
+				<% end %>
 			</div>
 		</div>
 	</div><br>
@@ -30,22 +32,24 @@
 	<div>
 	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
 		<div id="case_list">
+			<div class='case' data-active='false' data-id="NEW" id="newCase" draggable="true" OnMouseDown="StartMove(event)" ondragstart="drag(event)">Neuer Case</div>
 			<% @cases.each do |c| %>
-			  <div class='case' data-active='false' data-addid='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{c.tags}" %>' OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()">
+			  <div class='case' data-active='false' data-searchId='<%= "#{c.tags}" %>' data-id='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{$id_control}" %>' draggable="true" OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()" OnMouseDown="StartMove(event)" ondragstart="drag(event)">
+				<% $id_control += 1 %>
 				<%= "#{c.tags}" %>
-				<img class='control' src='/Icons/add.png' style='margin-left:5px;' onclick='AddMe("<%= c.tags %>", false)'></img>
 			  </div>
 			<% end %>
 		</div>
 	</div>
 </div>
 
-<div id="tooltip" class="tooltip" style="display:none; position:fixed; top:200px; left:100px; width:50%; height:400px;">
+<div id="tooltip" class="tooltip" style="display:none; position:fixed; bottom:20px; left:20px; width:50%; height:400px;">
 	<textarea id="tooltip-desc" style="width:98%;"></textarea>
 	<div id="tooltip-code" style="position:relative; width:98%; height:300px;"></div>
 </div>
 
 <script src="/src/ace.js" type="text/javascript" charset="utf-8"></script>
+<!-- Generelle Einrichtung und Tooltip verwaltung -->
 <script>
 	GetDivs();
 	HideAll();
@@ -55,6 +59,7 @@
 	function ShowTooltip(event){
 		var tooltip = document.getElementById("tooltip");
 		tooltip.style.display = "inline";
+		
 		if(event.target.dataset.desc != ""){
 			document.getElementById("tooltip-desc").style.display = "inline";
 			document.getElementById("tooltip-desc").value = event.target.dataset.desc;		
@@ -97,10 +102,21 @@
 			document.getElementById("img_caseToggle").src = "/Icons/Hide.png";
 		}
 	}
+</script>
+<!-- Hinzufügen und Reihenfolgen verwaltung -->
+<script>
+	var movingDiv;
 	
 	function update(){
 		var max = 0;
 		var childs = document.getElementById("holder").children;
+		var items = [];
+		for(i = 0; i < childs.length; i++){
+			if(childs[i].className != "dropZone"){
+				items.push(childs[i]);
+			}
+		}
+		childs = items;
 		document.getElementById("post_elements").value = "";
 		document.getElementById("post_elements").value = childs[0].dataset.id;
 		if(childs[0].dataset.level > max){
@@ -116,36 +132,54 @@
 		document.getElementById("post_level").value = parseInt(max) +1;
 	}
 	
-	function AddMe(id, group){
-		var target = document.getElementById(id);
-		var obj = document.createElement('div');
-		obj.dataset.id = target.dataset.addid;		
-		
-		if(group == true){
-			obj.setAttribute("class", "tree_group");
-			document.getElementById("post_elements").value += "," + target.dataset.addid;
-		}else{
-			obj.setAttribute("class", "case");
-			document.getElementById("post_elements").value += "," + target.dataset.addid;	
-		}
-		//obj.dataset.level = target.dataset.level;
-		obj.innerHTML = target.innerHTML;
-		inner = obj.children;
-		for(var i = 0; i < inner.length; i++){
-				obj.removeChild(inner[i]);
-		}
-		obj.children[0].src = "/Icons/delete.png";
-		obj.children[0].setAttribute("onclick", "RemoveMe(event)");
-		document.getElementById("holder").appendChild(obj);
-		update();
+	document.onmouseup=function(){StopMove()};
+	
+	function StartMove(event){
+		movingDiv = event.target;
+		HideTooltip();
 	}
 	
-	function RemoveMe(event){
-		document.getElementById("holder").removeChild(event.target.parentNode);
-		update();
+	function StopMove(){
+		var divs = document.getElementsByTagName("div");
+		for(var i = 0; i < divs.length; i++){
+			if(divs[i].className == "dropZone"){
+				divs[i].style.display = "none";
+			}
+		}
+	}
+	
+	function allowDrop(ev){
+		ev.preventDefault();
+	}
+
+	function drag(ev){
+		ev.dataTransfer.setData("Text",ev.target.id);
+		var divs = document.getElementsByTagName("div");
+		for(var i = 0; i < divs.length; i++){
+			if(divs[i].className == "dropZone"){
+				divs[i].style.display = "block";
+			}
+		}
+	}
+
+	function drop(ev){
+		ev.preventDefault();
+		StopMove();
+		var data=ev.dataTransfer.getData("Text");
+		if(data != "newCase"){
+			document.getElementById("holder").insertBefore(document.getElementById("dropZone").cloneNode(true), ev.target);
+			document.getElementById("holder").insertBefore(document.getElementById(data).cloneNode(true), ev.target);
+			update();
+		}else{
+			window.open("/cases/create/direct","Create Case", "width=600,height=400,status=yes,scrollbars=yes,resizable=yes");
+		}
 	}
 	
 	function SubmitForm(){
 		document.forms[0].submit();
+	}
+	
+	function Hello(id){
+		alert(id);
 	}
 </script>
