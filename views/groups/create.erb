@@ -107,7 +107,7 @@
 <script>
 	var movingDiv;
 	
-	function update(){
+	function Update(){
 		var max = 0;
 		var childs = document.getElementById("holder").children;
 		var items = [];
@@ -167,10 +167,25 @@
 		StopMove();
 		var data=ev.dataTransfer.getData("Text");
 		if(data != "newCase"){
-			document.getElementById("holder").insertBefore(document.getElementById("dropZone").cloneNode(true), ev.target);
-			document.getElementById("holder").insertBefore(document.getElementById(data).cloneNode(true), ev.target);
-			update();
+			if(data.substr(0,1) != "I"){
+				var dropZoneClone = document.getElementById("dropZone").cloneNode(true);
+				dropZoneClone.id = "DZ" + data;
+				document.getElementById("holder").insertBefore(dropZoneClone, ev.target);
+				var clone = document.getElementById(data).cloneNode(true);
+				clone.id = "I" + clone.id;
+				document.getElementById("holder").insertBefore(clone, ev.target);
+			}else{
+				document.getElementById("holder").insertBefore(document.getElementById("DZ" + data.substr(1,data.length)), ev.target);
+				document.getElementById("holder").insertBefore(document.getElementById(data), ev.target);
+			}
+			Update();
 		}else{
+			var dropZoneClone = document.getElementById("dropZone").cloneNode(true);
+			dropZoneClone.id = "DZ" + data;
+			document.getElementById("holder").insertBefore(dropZoneClone, ev.target);
+			var clone = document.getElementById(data).cloneNode(true);
+			clone.id = "I" + clone.id;
+			document.getElementById("holder").insertBefore(clone, ev.target);
 			window.open("/cases/create/direct","Create Case", "width=600,height=400,status=yes,scrollbars=yes,resizable=yes");
 		}
 	}
@@ -179,7 +194,13 @@
 		document.forms[0].submit();
 	}
 	
-	function Hello(id){
-		alert(id);
+	function AddNewCase(id){
+		console.debug("Neuer Case mit ID: " + id);
+		//var htmlString = "<div>Hallo Welt</div>";
+		//var parser = new DOMParser();
+		//htmlString = parser.parseFromString(htmlString, "text/xml");
+		//document.getElementById("holder").insertBefore(htmlString, document.getElementById("InewCase"));
+		document.getElementById("InewCase").dataset.id = "C" + id;
+		Update();
 	}
 </script>

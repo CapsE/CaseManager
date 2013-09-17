@@ -88,13 +88,14 @@ get "/" do
 	@id = 0
 	@elements = ["<a href='/run/${self.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${self.id}'><img class='control' src='/Icons/edit.png'></a>"]
 	@cases = Case.where("tags IS NOT ''")
-	@cases = Case.order("created_at DESC")
 	@cases = @cases.sort_by &:tags
 	@title = "Welcome."
 	erb :"posts/index"
 end
 
-get "/result" do
+get "/result/:id" do
+	f = File.open("files/results/#{params[:id]}")
+	@tree = f.read
 	erb :result
 end
 
