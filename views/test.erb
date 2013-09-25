@@ -4,24 +4,17 @@
 </head>
 <body>
 	<div style="width:25%; height:50%;">
-		<Button>TEST</Button>
+		<div><%= @cookies["name"]%></div>
+		<Button onclick="Set()">Set</Button>
+		<Button onclick="Get()">Get</Button>
 	</div>
 </body>
 <script>
-	function AJAX(){
-		$.ajax({
-			type: 'get',
-			url: '/json/group/1',
-			dataType: 'json',
-			success: function(data) {								
-				jData = data;
-				console.debug(jData);
-			},
-			error: function(data) {
-				console.debug("getData failed");
-			}
-		})
+	function Set(){
+		setCookie("name", "Paul", 5);
 	}
 	
-	w = window.open("/cases/create", "Test-Fenster","width=600,height=500");
+	function Get(){
+		console.debug(getCookie("name"));
+	}
 </script>

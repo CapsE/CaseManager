@@ -2,13 +2,16 @@
 <h2>Create Group</h2>
 <br/>
 <form id="groupForm" action="/groups" method="post">
-  <label for="post_title">Tags:</label>
-  <input id="post_title" name="post[tags]" type="text" value="default" size="77"/>
+	<label for="post_name">Name:</label>
+  <input id="post_name" name="post[name]" type="text" value="" size="77"/>
+  <label for="post_tags">Tags:</label>
+  <input id="post_tags" name="post[tags]" type="text" value="default" size="77"/>
   <input id="post_elements" name="post[elements]" type="text" value="">
   <input id="post_level" name="post[level]" type="text" value="1">
 
 </form> 
-	<label for="post_body">Inhalt:</label><br>
+	<label for="post_body">Inhalt:</label>
+	<div id="deleter" ondrop="deleteDrop(event)" ondragover="allowDrop(event)" style="background:red; height:20px; float:right; padding:3px;">drop to delete</div><br>
 	<div id="holder">
 		<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
 	</div>
@@ -36,7 +39,7 @@
 			<% @cases.each do |c| %>
 			  <div class='case' data-active='false' data-searchId='<%= "#{c.tags}" %>' data-id='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{$id_control}" %>' draggable="true" OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()" OnMouseDown="StartMove(event)" ondragstart="drag(event)">
 				<% $id_control += 1 %>
-				<%= "#{c.tags}" %>
+				<%= "#{c.name}" %>
 			  </div>
 			<% end %>
 		</div>
@@ -188,6 +191,17 @@
 			document.getElementById("holder").insertBefore(clone, ev.target);
 			window.open("/cases/create/direct","Create Case", "width=600,height=400,status=yes,scrollbars=yes,resizable=yes");
 		}
+	}
+	
+	function deleteDrop(ev){
+		ev.preventDefault();
+		StopMove();
+		var data=ev.dataTransfer.getData("Text");
+		if(data.substr(0,1) == "I"){
+			document.getElementById("holder").removeChild(document.getElementById(data));
+			document.getElementById("holder").removeChild(document.getElementById("DZ" + data.substr(1,data.length)));
+		}
+		Update();
 	}
 	
 	function SubmitForm(){

@@ -12,6 +12,19 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
+.tag{
+	background:#3F8FD2;
+	color:#FFB540;
+	cursor:pointer;
+	padding:3px;
+	padding-left:4px;
+	padding-right:4px;
+	margin:2px;
+	display:inline;
+	border:solid;
+	border-width:1px;
+	border-color:black;
+}
 .dropZone{
 	width:100%;
 	background:lightblue;

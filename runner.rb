@@ -48,7 +48,7 @@ def runGroup group
 			$result = nil
 			$log = ""
 			c = Case.find(el[1..-1])
-			@tree += "<li class='tree_case'>#{c.tags}  "
+			@tree += "<li class='tree_case'>#{c.name}  "
 			#Ausf�hren des eigengebenen Codes
 			@runtime = 60
 			thread = Thread.new{

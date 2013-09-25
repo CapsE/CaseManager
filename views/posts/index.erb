@@ -12,8 +12,8 @@
 <div id="cases" style="float:right; width:48%">
 <h2>Cases</h2>
 <% @cases.each do |c| %>
-  <div class="case" id="<%= "#{c.tags}"%>" data-search='true' data-searchid="<%= "#{c.tags}"%>">
-    <h4><a href="/cases/edit/<%= c.id %>"><%= "#{c.tags}" %></a></h4>
+  <div class="case" id="<%= "#{c.name}"%>" data-search='true' data-searchid="<%= "#{c.name}"%>">
+    <h4><a href="/cases/edit/<%= c.id %>"><%= "#{c.name}" %></a></h4>
 	<p><div class="code"><%= c.code %></div>
     <p>Created: <%= c.created_at %></p>
   </div>

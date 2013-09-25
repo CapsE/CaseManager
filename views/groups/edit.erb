@@ -4,6 +4,8 @@
 <form id="groupForm" action="/groups/edit" method="post">
   <label for="post_id">ID:</label>
   <input id="post_id" name="post[id]" type="text" value="<%= @group.id %>" readonly size="5"/>
+  <label for="post_name">Name:</label>
+  <input id="post_name" name="post[name]" type="text" value="<%= @group.name %>" size="77"/>
   <label for="post_title">Tags:</label>
   <input id="post_title" name="post[tags]" type="text" value="<%= @group.tags %>" size="77"/>
   <input id="post_elements" name="post[elements]" type="text" value="<%= @group.elements %>">

@@ -13,6 +13,8 @@
 		<a class="MItem" href="/cases/create">New Case</a>
 		<a class="MItem" href="/groups/create">New Group</a>
 		<input type="text" id="suche" placeholder = "Suche" OnKeyUp="SearchCases()" onblur="ClearSearch()" style="float:right; width:25%;"/><br>
+		<div id="tagHolder" style="float:right; width:25%" data-tags="<%= @tags %>">
+		</div>
     </div>
     <div class="container">
       <% if flash[:notice] %>
@@ -24,4 +26,7 @@
       <%= yield %>
     </div>
   </body>
+  <script>
+  	CreateTagsDom(document.getElementById("tagHolder").dataset.tags);
+  </script>
 </html>

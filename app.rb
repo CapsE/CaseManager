@@ -2,6 +2,7 @@
 
 	require 'sinatra'
 	require 'sinatra/activerecord'
+	require 'sinatra/cookies'
 	require './environments'
 	require 'sinatra/flash'
 	require 'sinatra/redirect_with_flash'
@@ -29,10 +30,10 @@ begin # Klassen definitionen der Datenbank elemente
 		#########################################################################################################
 		def to_tree controls = nil
 			#Haupt-Container und Toggle Button
-			@html = "<li id='#{$id_control}' class='tree_group' data-id='G#{self.id}' data-searchid='#{self.tags}' draggable='true' OnMouseDown='StartMove(event)' ondragstart='drag(event)'><img class='identifier' data-id=\"T#{$tree_group}\" src='/Icons/hide.png' onclick='Toggle(event, \"T#{$tree_group}\")'>"
+			@html = "<li id='#{$id_control}' class='tree_group' data-id='G#{self.id}' data-searchid='#{self.name}' draggable='true' OnMouseDown='StartMove(event)' ondragstart='drag(event)'><img class='identifier' data-id=\"T#{$tree_group}\" src='/Icons/hide.png' onclick='Toggle(event, \"T#{$tree_group}\")'>"
 			$id_control += 1
 			#Beschriftung
-			@html += "<div class='tree_group' data-active='false'>#{self.tags}"
+			@html += "<div class='tree_group' data-active='false'>#{self.name}"
 			#Zusätzliche Controls falls vorhanden
 			if controls
 				controls.each do |el|
@@ -80,15 +81,52 @@ begin # Klassen definitionen der Datenbank elemente
 			return @html
 		end
 	end
+	
+	class Tag < ActiveRecord::Base
+	  validates :name, presence: true
+	  validates :object, presence: true
+	  #validates_uniqueness_of :name, scope: :object
+	end
 end
 
 get "/" do
-	@groups = Group.order("created_at DESC")
+	@groups = []
+	@cases = []
+	@rel = []
+	if @tags != ""
+  	arr = @tags.split(",")
+  	if arr == []
+  	  arr = [@tags]
+  	end
+  	arr.each do |t|
+  	  puts "A: " + t
+  	  if t != ""
+  	   search = Tag.where("name LIKE '#{t}'")
+  	   if search
+  	    search.each do |s|
+  	      puts "B: " + s.object
+  	      @rel << s.object
+  	    end
+  	   end
+  	  end
+  	end
+  	puts "Relation: " + @rel.to_s
+  	@rel.each do |r|
+  	   if r[0] == "G"
+  	     @groups << Group.find(r[1..-1])
+  	   elsif r[0] == "C"
+  	     @cases << Case.find(r[1..-1])
+  	   end
+  	end
+  else
+     @groups = Group.order("name DESC")
+     @cases = Case.order("name DESC")
+  end
 	@tree = ""
 	@id = 0
 	@elements = ["<a href='/run/${self.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${self.id}'><img class='control' src='/Icons/edit.png'></a>"]
-	@cases = Case.where("tags IS NOT ''")
-	@cases = @cases.sort_by &:tags
+	#@cases = Case.where("tags IS NOT ''")
+	#@cases = @cases.sort_by &:tags
 	@title = "Welcome."
 	erb :"posts/index"
 end
@@ -114,6 +152,17 @@ helpers do
   end
 end
 
+before do
+    @cookies = request.cookies
+    @tags = @cookies["tags"]
+    if @tags[0] == ","
+      @tags = @tags[1..-1]
+    end
+    if @tags[-1] == ","
+      @tags = @tags[0..-2]
+    end
+end
+
 begin # Erstellen von Caseses und Groups
 	# Interface Caseses
 	get "/cases/create" do
@@ -128,10 +177,19 @@ begin # Erstellen von Caseses und Groups
 		puts "----------------------------------------------"
 		@case = Case.new(params[:post])
 		if @case.save
-			redirect "/"
+		  params[:post]["tags"].split(",").each do |t|
+          puts "NEW RELATION: " + {"name" => t, "object" => "C" + @case.id.to_s}.to_s
+          a = Tag.new({"name" => t, "object" => "C" + @case.id.to_s})
+          if a.save
+          else
+            redirect "cases/create", :error => 'Something went wrong with the Tags. Try again.'
+          end
+          puts a
+         end
 		else
 			redirect "cases/create", :error => 'Something went wrong. Try again.'
 		end
+		redirect "/"
 	end
 	
 	# Interface Caseses für Popup
@@ -142,12 +200,23 @@ begin # Erstellen von Caseses und Groups
 	# In die Datenbank ablegen aus einem Popup Fenster
 	post "/cases/direct" do
 		puts "----------------------------------------------"
-		puts params[:post]
-		puts "----------------------------------------------"
-		@case = Case.new(params[:post])
-		if @case.save
-			redirect "popup/close/#{@case.id}"
-		end
+    puts params[:post]
+    puts "----------------------------------------------"
+    @case = Case.new(params[:post])
+    if @case.save
+      params[:post]["tags"].split(",").each do |t|
+          puts "NEW RELATION: " + {"name" => t, "object" => "C" + @case.id.to_s}.to_s
+          a = Tag.new({"name" => t, "object" => "C" + @case.id.to_s})
+          if a.save
+          else
+            redirect "cases/create", :error => 'Something went wrong with the Tags. Try again.'
+          end
+          puts a
+         end
+    else
+      redirect "cases/create", :error => 'Something went wrong. Try again.'
+    end
+	   redirect "popup/close/#{@case.id}"
 	end
 	
 	get "/popup/close/:id" do
@@ -171,14 +240,21 @@ begin # Erstellen von Caseses und Groups
 	# In die Datenbank ablegen
 	post "/groups" do
 		@group = Group.new(params[:post])
-		
 		if @group.save
-			redirect "/"
+		  params[:post]["tags"].split(",").each do |t|
+          puts "NEW RELATION: " + {"name" => t, "object" => "G" + @group.id.to_s}.to_s
+          a = Tag.new({"name" => t, "object" => "G" + @group.id.to_s})
+          if a.save
+          else
+            redirect "groups/create", :error => 'Something went wrong with the Tags. Try again.'
+          end
+          puts a
+         end
 		else
 			redirect "groups/create", :error => 'Something went wrong. Try again.'
 		end
-	end
-
+		redirect "/"
+	end 
 end
 
 begin # Editieren von Caseses und Groups
@@ -193,6 +269,10 @@ begin # Editieren von Caseses und Groups
 	# In die Datenbak eintragen
 	post "/cases/edit" do
 		@case = Case.update(params[:post][:id], params[:post])
+		params[:post]["tags"].split(",").each do |t|
+      t.gsub!(" ", "")
+      Tag.new({"name" => t, "object" => "C" + @case.id})
+    end
 		 if @case.save
 			redirect "/"
 		  else
@@ -212,6 +292,10 @@ begin # Editieren von Caseses und Groups
 	# In die Datenbak eintragen
 	post "/groups/edit" do
 		@group = Group.update(params[:post][:id], params[:post])
+		params[:post]["tags"].split(",").each do |t|
+      t.gsub!(" ", "")
+      Tag.new({"name" => t, "object" => "G" + @group.id})
+    end
 		 if @group.save
 			redirect "/"
 		  else
@@ -233,6 +317,10 @@ begin # JSON Daten anfordern
 		content_type :json
 		@case = Case.find(params[:id])
 		return @case.to_json
+	end
+	
+	get "/test" do
+	   response.set_cookie("tags", "")
 	end
 end
 
