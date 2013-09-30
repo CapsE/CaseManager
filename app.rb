@@ -89,39 +89,73 @@ begin # Klassen definitionen der Datenbank elemente
 	end
 end
 
+begin # Used Variables
+	@groups = []
+	@cases = []
+	@tags = ""
+end
+
+begin # Helper
+	def cookieSelect
+		@rel = []
+		if @tags != "" && @tags != nil
+			arr = @tags.split(",")
+			if arr == []
+				arr = [@tags]
+			end
+			arr.each do |t|
+				if t != ""
+					search = Tag.where("name LIKE '#{t}'")
+					if search
+						search.each do |s|
+							puts "B: " + s.object
+							@rel << s.object
+						end
+					end
+				end
+			end
+		@rel.each do |r|
+		   if r[0] == "G"
+			 @groups << Group.find(r[1..-1])
+		   elsif r[0] == "C"
+			 @cases << Case.find(r[1..-1])
+		   end
+		end
+	  else
+		 @groups = Group.order("name DESC")
+		 @cases = Case.order("name DESC")
+	  end
+	end
+
+	before do
+		@cookies = request.cookies
+  	if @cookies["tags"]
+  		@tags = @cookies["tags"]
+  		if @tags[0] == ","
+  			@tags = @tags[1..-1]
+  		end
+  		if @tags[-1] == ","
+  			@tags = @tags[0..-2]
+  		end
+  	end
+	end
+	
+	helpers do
+		def title
+			if @title
+				"#{@title}"
+			else
+				"Welcome."
+			end
+		end
+	end
+end
+
 get "/" do
 	@groups = []
 	@cases = []
-	@rel = []
-	if @tags != ""
-  	arr = @tags.split(",")
-  	if arr == []
-  	  arr = [@tags]
-  	end
-  	arr.each do |t|
-  	  puts "A: " + t
-  	  if t != ""
-  	   search = Tag.where("name LIKE '#{t}'")
-  	   if search
-  	    search.each do |s|
-  	      puts "B: " + s.object
-  	      @rel << s.object
-  	    end
-  	   end
-  	  end
-  	end
-  	puts "Relation: " + @rel.to_s
-  	@rel.each do |r|
-  	   if r[0] == "G"
-  	     @groups << Group.find(r[1..-1])
-  	   elsif r[0] == "C"
-  	     @cases << Case.find(r[1..-1])
-  	   end
-  	end
-  else
-     @groups = Group.order("name DESC")
-     @cases = Case.order("name DESC")
-  end
+
+  	cookieSelect()
 	@tree = ""
 	@id = 0
 	@elements = ["<a href='/run/${self.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${self.id}'><img class='control' src='/Icons/edit.png'></a>"]
@@ -140,27 +174,6 @@ end
 #Downloads aus dem Ordner files ermöglichen
 get '/download/:filename' do |filename|
   send_file "./files/#{filename}", :filename => filename, :type => 'Application/octet-stream'
-end
-
-helpers do
-  def title
-    if @title
-      "#{@title}"
-    else
-      "Welcome."
-    end
-  end
-end
-
-before do
-    @cookies = request.cookies
-    @tags = @cookies["tags"]
-    if @tags[0] == ","
-      @tags = @tags[1..-1]
-    end
-    if @tags[-1] == ","
-      @tags = @tags[0..-2]
-    end
 end
 
 begin # Erstellen von Caseses und Groups
