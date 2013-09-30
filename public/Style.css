@@ -123,12 +123,12 @@ li{
 }
 
 .case{
-	background:#FFC473;
-	padding-bottom:1px;
+	background:#D0E297;
+	padding-bottom:4px;
 	margin-bottom:4px;
 	padding-left:10px;
 	border:solid;
 	border-width:1px;
-	border-color:black;
+	border-color:#648923;
 	display:block;
 }

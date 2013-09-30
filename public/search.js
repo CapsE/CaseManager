@@ -45,6 +45,7 @@ function RemoveTag(elem){
         }
     }
     setCookie("tags", tags, 365);
+    document.location.reload(false);
 }
 
 function CreateTagsDom(){
@@ -61,7 +62,7 @@ function CreateTagsDom(){
            document.getElementById("tagHolder").appendChild(div);
        }
    }
-   setCookie("tags", tags, 365);
+   setCookie("tags", tags, 365);  
 }
 
 function GlobalSearch(event){
@@ -73,6 +74,7 @@ function GlobalSearch(event){
 	}
 	if(event.keyCode == 13 && document.getElementById("suche").value != ""){
 	    CreateTagsDom();
+	    document.location.reload(false);
 	}
 }
 

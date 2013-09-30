@@ -11,6 +11,7 @@
 	require './basic'
 
 	enable :sessions
+	set :bind, '0.0.0.0'
 end
 
 $tree_group = 0
@@ -77,7 +78,7 @@ begin # Klassen definitionen der Datenbank elemente
 		validates :code, presence: true
 		
 		def to_tree
-			@html = "<li id='#{self.tags}' data-search='true'>#{self.tags}</li>"
+			@html = "<li id='#{self.name}' data-search='true'>#{self.name}</li>"
 			return @html
 		end
 	end
@@ -108,7 +109,6 @@ begin # Helper
 					search = Tag.where("name LIKE '#{t}'")
 					if search
 						search.each do |s|
-							puts "B: " + s.object
 							@rel << s.object
 						end
 					end
@@ -116,9 +116,9 @@ begin # Helper
 			end
 		@rel.each do |r|
 		   if r[0] == "G"
-			 @groups << Group.find(r[1..-1])
+			   @groups << Group.find(r[1..-1])
 		   elsif r[0] == "C"
-			 @cases << Case.find(r[1..-1])
+			   @cases << Case.find(r[1..-1])
 		   end
 		end
 	  else
@@ -155,7 +155,7 @@ get "/" do
 	@groups = []
 	@cases = []
 
-  	cookieSelect()
+  cookieSelect()
 	@tree = ""
 	@id = 0
 	@elements = ["<a href='/run/${self.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${self.id}'><img class='control' src='/Icons/edit.png'></a>"]
@@ -177,6 +177,22 @@ get '/download/:filename' do |filename|
 end
 
 begin # Erstellen von Caseses und Groups
+	def createTags tags, preChar
+    tags.split(",").each do |t|
+      #puts "New Relation: " + {"name" => t, "object" => preChar + @case.id.to_s}.to_s
+      if preChar == "C"
+        newTag = Tag.new({"name" => t, "object" => preChar + @case.id.to_s})
+      else
+        newTag = Tag.new({"name" => t, "object" => preChar + @group.id.to_s})
+      end
+      if newTag.save
+        puts "Tag safed"
+      else
+        redirect "cases/create", :error => 'Something went wrong with the Tags. Try again.'
+      end
+    end
+	end
+	
 	# Interface Caseses
 	get "/cases/create" do
 		@title = "Create Case"
@@ -190,15 +206,7 @@ begin # Erstellen von Caseses und Groups
 		puts "----------------------------------------------"
 		@case = Case.new(params[:post])
 		if @case.save
-		  params[:post]["tags"].split(",").each do |t|
-          puts "NEW RELATION: " + {"name" => t, "object" => "C" + @case.id.to_s}.to_s
-          a = Tag.new({"name" => t, "object" => "C" + @case.id.to_s})
-          if a.save
-          else
-            redirect "cases/create", :error => 'Something went wrong with the Tags. Try again.'
-          end
-          puts a
-         end
+      createTags(params[:post]["tags"], "C")
 		else
 			redirect "cases/create", :error => 'Something went wrong. Try again.'
 		end
@@ -210,6 +218,7 @@ begin # Erstellen von Caseses und Groups
 		@title = "Create Case"
 		erb :"cases/createPopup", :layout => false
 	end
+	
 	# In die Datenbank ablegen aus einem Popup Fenster
 	post "/cases/direct" do
 		puts "----------------------------------------------"
@@ -217,15 +226,7 @@ begin # Erstellen von Caseses und Groups
     puts "----------------------------------------------"
     @case = Case.new(params[:post])
     if @case.save
-      params[:post]["tags"].split(",").each do |t|
-          puts "NEW RELATION: " + {"name" => t, "object" => "C" + @case.id.to_s}.to_s
-          a = Tag.new({"name" => t, "object" => "C" + @case.id.to_s})
-          if a.save
-          else
-            redirect "cases/create", :error => 'Something went wrong with the Tags. Try again.'
-          end
-          puts a
-         end
+      createTags(params[:post]["tags"], "C")
     else
       redirect "cases/create", :error => 'Something went wrong. Try again.'
     end
@@ -254,15 +255,7 @@ begin # Erstellen von Caseses und Groups
 	post "/groups" do
 		@group = Group.new(params[:post])
 		if @group.save
-		  params[:post]["tags"].split(",").each do |t|
-          puts "NEW RELATION: " + {"name" => t, "object" => "G" + @group.id.to_s}.to_s
-          a = Tag.new({"name" => t, "object" => "G" + @group.id.to_s})
-          if a.save
-          else
-            redirect "groups/create", :error => 'Something went wrong with the Tags. Try again.'
-          end
-          puts a
-         end
+		  createTags(params[:post]["tags"], "G")
 		else
 			redirect "groups/create", :error => 'Something went wrong. Try again.'
 		end
