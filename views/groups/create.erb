@@ -10,7 +10,7 @@
   <input id="post_level" name="post[level]" type="text" value="1">
 
 </form> 
-	<label for="post_body">Inhalt:</label>
+	<label for="post_body">Content:</label>
 	<div id="deleter" ondrop="deleteDrop(event)" ondragover="allowDrop(event)" style="background:red; height:20px; float:right; padding:3px;">drop to delete</div><br>
 	<div id="holder">
 		<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
@@ -35,7 +35,7 @@
 	<div>
 	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
 		<div id="case_list">
-			<div class='case' data-active='false' data-id="NEW" id="newCase" draggable="true" OnMouseDown="StartMove(event)" ondragstart="drag(event)">Neuer Case</div>
+			<div class='case' data-active='false' data-id="NEW" id="newCase" draggable="true" OnMouseDown="StartMove(event)" ondragstart="drag(event)">New Case</div>
 			<% @cases.each do |c| %>
 			  <div class='case' data-active='false' data-searchId='<%= "#{c.tags}" %>' data-id='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{$id_control}" %>' draggable="true" OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()" OnMouseDown="StartMove(event)" ondragstart="drag(event)">
 				<% $id_control += 1 %>
