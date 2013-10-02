@@ -62,4 +62,4 @@ There are some other states that a case can have:
 	
 How to run my groups automaticly
 ======
-Use a HTTP-Request (For example with curl) to run any group you created. You can send a get request to "<yourserver>/run/<id of group>" or a post request to "<yourserver>/run" wich posts a JSON object containing a field "id" and fields for all user-variables.
+Use a HTTP-Request (For example with curl) to run any group you created. You can send a get request to "'yourserver'/run/'id of group'" or a post request to "'yourserver'/run" wich posts a JSON object containing a field "id" and fields for all user-variables.
