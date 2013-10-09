@@ -1,6 +1,6 @@
+﻿<div class="" style="float:left; width:65%; padding:5px;">
 <h2>Edit Group</h2>
 <br/>
-<div class="group" style="float:left; width:50%; padding:5px; background:#FFC8AD; position:fixed; top:100px; left:5px;">
 <form id="groupForm" action="/groups/edit" method="post">
   <label for="post_id">ID:</label>
   <input id="post_id" name="post[id]" type="text" value="<%= @group.id %>" readonly size="5"/>
@@ -12,64 +12,123 @@
   <input id="post_level" name="post[level]" type="text" value="<%= @group.level %>">
   <br/>
   <br/>
-  <label for="post_body">Inhalt:</label><br>
-  <div id="holder">
-	<% @group.elements.split(",").each do |el|
-		if el[0] == "C"
-			classname = "case_edit"
-			c = Case.find(el[1..-1])
-		else
-			classname = "group_edit"
-			c = Group.find(el[1..-1])
-		end%>
-		<div id="<%= el[1..-1] %>" class="<%= classname %>" data-id="<%= el %>" onclick="RemoveMe(event)" style="color:#A62222; cursor:pointer;">#<%= el[1..-1] %> <%= c.tags %> >> </div>
-	<% end %>
-		
-  </div>
-  <br />
-  <input type="submit" value="Update"/>
-</form> 
-</div>
-<div style="float:right; width:49%">
-	<h2>Gruppen</h2>
-	<% @groups.each do |group| %>
-    <div class="tree_group" id="<%= group.tags %>">
-	<h4><a id="<%= group.id %>" class="myButton" onclick="AddMe(event)" data-level="<%= group.level %>" ><%= "<< ##{group.id} #{group.tags}" %></a></h4>
-	<ul>
-		<% if group.elements
-		group.elements.split(",").each do |rela| 
-			if rela[0] == "C"
-				c = Case.find(rela[1..-1])
-			else
-				c = Group.find(rela[1..-1])
-			end%>
-			<li><%= "#" + rela[0] + c.id.to_s + " " + c.tags%></li>
-		<% end
-		end %>
-	</ul>
-    <p>Created: <%= group.created_at %></p>
+<label for="post_body">Content:</label>
+	<div id="deleter" ondrop="deleteDrop(event)" ondragover="allowDrop(event)" style="background:red; height:20px; float:right; padding:3px;">drop to delete</div><br>
+	<div id="holder">
+		<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
+		<% @group.elements.split(",").each do |el| %>
+			<% c = Case.find(el[1..-1]) %>
+			<div id="I<%= c.name %>" class="case" data-active="false" data-searchid="<%= c.tags %>" data-id="C<%= c.id %>" data-toolid="1" data-code="<%= c.code %>" data-desc="" draggable="true" onmouseover="ShowTooltip(event)" onmouseout="HideTooltip()" onmousedown="StartMove(event)" ondragstart="drag(event)"><%= c.name %></div>
+			<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
+		<% end %>
 	</div>
-<% end %>
-
-	<h2>Cases</h2>
-	<% @cases.each do |c| %>
-	  <div class="case" id="<%= c.tags %>">
-		<h4><a id="<%= c.id %>" class="myButton" onclick="AddMe(event)" data-level="0" ><%= "<< ##{c.id} #{c.tags}" %></a></h4>
-		<p><code><%= c.code %></code>
-		<p>Created: <%= c.created_at %></p>
-	  </div>
-	<% end %>
+	<br />
+	<input type="submit" value="Edit" onclick="SubmitForm()"/>
+</div>
+<div style="float:right; width:30%; height:800px; padding-left:5px; overflow:scroll;">
+	<div>
+		<img id="img_groupToggle" src="/Icons/Hide.png" onclick="ToggleGroups()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Groups</h2>
+		<div id="group_list">
+			<a class="button" style="float:right;" onclick="HideAll()">Collapse all</a>
+			<a class="button" style="float:right;" onclick="ShowAll()">Expand all</a><br>
+			<div id="groups_tree">
+				<% @groups.each do |g| %>
+					<%= g.to_tree(@elements) %>
+				<% end %>
+			</div>
+		</div>
+	</div><br>
+	
+	<div>
+	<img id="img_caseToggle" src="/Icons/Hide.png" onclick="ToggleCases()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Cases</h2>
+		<div id="case_list">
+			<div class='case' data-active='false' data-id="NEW" id="newCase" draggable="true" OnMouseDown="StartMove(event)" ondragstart="drag(event)">New Case</div>
+			<% @cases.each do |c| %>
+			  <div class='case' data-active='false' data-searchId='<%= "#{c.tags}" %>' data-id='<%="C#{c.id}" %>' data-toolid='<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' id='<%= "#{$id_control}" %>' draggable="true" OnMouseOver="ShowTooltip(event)" OnMouseOut="HideTooltip()" OnMouseDown="StartMove(event)" ondragstart="drag(event)">
+				<% $id_control += 1 %>
+				<%= "#{c.name}" %>
+			  </div>
+			<% end %>
+		</div>
+	</div>
 </div>
 
+<div id="tooltip" class="tooltip" style="display:none; position:fixed; bottom:20px; left:20px; width:50%; height:400px;">
+	<textarea id="tooltip-desc" style="width:98%;"></textarea>
+	<div id="tooltip-code" style="position:relative; width:98%; height:300px;"></div>
+</div>
+
+<script src="/src/ace.js" type="text/javascript" charset="utf-8"></script>
+<!-- Generelle Einrichtung und Tooltip verwaltung -->
 <script>
 	GetDivs();
+	HideAll();
+	var lastItem = 0;
 	var objects = [];
 	
-	function update(){
+	function ShowTooltip(event){
+		var tooltip = document.getElementById("tooltip");
+		tooltip.style.display = "inline";
+		
+		if(event.target.dataset.desc != ""){
+			document.getElementById("tooltip-desc").style.display = "inline";
+			document.getElementById("tooltip-desc").value = event.target.dataset.desc;		
+		}else{
+			document.getElementById("tooltip-desc").style.display = "none";
+		}
+		var editor = ace.edit("tooltip-code");
+		editor.setTheme("ace/theme/chrome");
+		editor.getSession().setMode("ace/mode/ruby");
+		editor.setValue(event.target.dataset.code);
+		editor.setReadOnly(true);
+		var h = 400 - document.getElementById("tooltip-desc").style.height;
+		if(h > 100){
+			document.getElementById("tooltip-code").style.height = h;
+		}else{
+			document.getElementById("tooltip-code").style.height = 100;	
+		}
+		editor.resize();
+	}
+	
+	function HideTooltip(){
+		document.getElementById("tooltip").style.display = "none";
+	}
+	
+	function ToggleGroups(){
+		if(document.getElementById("group_list").style.display != "none"){
+			document.getElementById("group_list").style.display = "none";
+			document.getElementById("img_groupToggle").src = "/Icons/Show.png";
+		}else{
+			document.getElementById("group_list").style.display = "inline";
+			document.getElementById("img_groupToggle").src = "/Icons/Hide.png";
+		}
+	}
+	function ToggleCases(){
+		if(document.getElementById("case_list").style.display != "none"){
+			document.getElementById("case_list").style.display = "none";
+			document.getElementById("img_caseToggle").src = "/Icons/Show.png";
+		}else{
+			document.getElementById("case_list").style.display = "inline";
+			document.getElementById("img_caseToggle").src = "/Icons/Hide.png";
+		}
+	}
+</script>
+<!-- Hinzufügen und Reihenfolgen verwaltung -->
+<script>
+	var movingDiv;
+	
+	function Update(){
+		console.debug("UPDATE!!!")
 		var max = 0;
 		var childs = document.getElementById("holder").children;
+		var items = [];
+		for(i = 0; i < childs.length; i++){
+			if(childs[i].className != "dropZone"){
+				items.push(childs[i]);
+			}
+		}
+		childs = items;
 		document.getElementById("post_elements").value = "";
-		document.getElementById("post_level").value = 1;
 		document.getElementById("post_elements").value = childs[0].dataset.id;
 		if(childs[0].dataset.level > max){
 			max = childs[0].dataset.level
@@ -84,29 +143,87 @@
 		document.getElementById("post_level").value = parseInt(max) +1;
 	}
 	
-	function AddMe(event){
-		var obj = document.createElement('div');
-		obj.id = event.target.id;
-		obj.setAttribute("class", event.target.parentNode.parentNode.className);
-		if(event.target.parentNode.parentNode.className == "group"){
-			document.getElementById("post_elements").value += ",G" + event.target.id;
-			obj.dataset.id = "G" + event.target.id;
-		}else{
-			document.getElementById("post_elements").value += ",C" + event.target.id;
-			obj.dataset.id = "C" + event.target.id;		
-		}
-		obj.dataset.level = event.target.dataset.level;
-		obj.setAttribute("onclick", "RemoveMe(event)");
-		obj.innerHTML = event.target.innerHTML.substr(9) + " >>";
-		obj.style.color = "#A62222";
-		obj.style.cursor = "pointer";
-		document.getElementById("holder").appendChild(obj);
-		update();
-		//
+	document.onmouseup=function(){StopMove()};
+	
+	function StartMove(event){
+		movingDiv = event.target;
+		HideTooltip();
 	}
 	
-	function RemoveMe(event){
-		document.getElementById("holder").removeChild(event.target);
-		update();
+	function StopMove(){
+		var divs = document.getElementsByTagName("div");
+		for(var i = 0; i < divs.length; i++){
+			if(divs[i].className == "dropZone"){
+				divs[i].style.display = "none";
+			}
+		}
 	}
+	
+	function allowDrop(ev){
+		ev.preventDefault();
+	}
+
+	function drag(ev){
+		ev.dataTransfer.setData("Text",ev.target.id);
+		var divs = document.getElementsByTagName("div");
+		for(var i = 0; i < divs.length; i++){
+			if(divs[i].className == "dropZone"){
+				divs[i].style.display = "block";
+			}
+		}
+	}
+
+	function drop(ev){
+		ev.preventDefault();
+		StopMove();
+		var data=ev.dataTransfer.getData("Text");
+		if(data != "newCase"){
+			if(data.substr(0,1) != "I"){
+				var dropZoneClone = document.getElementById("dropZone").cloneNode(true);
+				dropZoneClone.id = "DZ" + data;
+				document.getElementById("holder").insertBefore(dropZoneClone, ev.target);
+				var clone = document.getElementById(data).cloneNode(true);
+				clone.id = "I" + clone.id;
+				document.getElementById("holder").insertBefore(clone, ev.target);
+			}else{
+				document.getElementById("holder").insertBefore(document.getElementById("DZ" + data.substr(1,data.length)), ev.target);
+				document.getElementById("holder").insertBefore(document.getElementById(data), ev.target);
+			}
+			Update();
+		}else{
+			var dropZoneClone = document.getElementById("dropZone").cloneNode(true);
+			dropZoneClone.id = "DZ" + data;
+			document.getElementById("holder").insertBefore(dropZoneClone, ev.target);
+			var clone = document.getElementById(data).cloneNode(true);
+			clone.id = "I" + clone.id;
+			document.getElementById("holder").insertBefore(clone, ev.target);
+			window.open("/cases/create/direct","Create Case", "width=600,height=400,status=yes,scrollbars=yes,resizable=yes");
+		}
+	}
+	
+	function deleteDrop(ev){
+		ev.preventDefault();
+		StopMove();
+		var data=ev.dataTransfer.getData("Text");
+		if(data.substr(0,1) == "I"){
+			document.getElementById("holder").removeChild(document.getElementById(data));
+			document.getElementById("holder").removeChild(document.getElementById("DZ" + data.substr(1,data.length)));
+		}
+		Update();
+	}
+	
+	function SubmitForm(){
+		document.forms[0].submit();
+	}
+	
+	function AddNewCase(id){
+		console.debug("Neuer Case mit ID: " + id);
+		//var htmlString = "<div>Hallo Welt</div>";
+		//var parser = new DOMParser();
+		//htmlString = parser.parseFromString(htmlString, "text/xml");
+		//document.getElementById("holder").insertBefore(htmlString, document.getElementById("InewCase"));
+		document.getElementById("InewCase").dataset.id = "C" + id;
+		Update();
+	}
+	
 </script>

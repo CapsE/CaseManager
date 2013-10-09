@@ -12,9 +12,17 @@ li{
 	list-style-image: url('Icons/dots.png');
 }
 
+a:link { 
+	color:#C0E2F8; 
+}
+
+a:visited { 
+	color:#b0d2e8; 
+}
+
 .tag{
-	background:#3F8FD2;
-	color:#FFB540;
+	background:#2F3A54;
+	color:#C0E2F8;
 	cursor:pointer;
 	padding:3px;
 	padding-left:4px;
@@ -46,8 +54,8 @@ li{
 }
 
 .button{
-	background:#3F8FD2;
-	color:#FFB540;
+	background:#2F3A54;
+	color:#C0E2F8;
 	padding:3px;
 	padding-left:4px;
 	padding-right:4px;
@@ -100,14 +108,15 @@ li{
 	font-size:24px;
 	padding:5px;
 	margin:5px;
-	color:inherit;
+	color:#C0E2F8;
 }
 
 .navigation{
-	background:linear-gradient( #3F8FD2 0%, #0B5FA5 100%);
-	color:#FFB540;
+	background:linear-gradient( #2F3A54 0%, #4F5A74 100%);
+	color:#C0E2F8;
 	width:100%;
 	padding:5px;
+	padding-bottom:0px;
 }
 
 .group{
@@ -123,12 +132,12 @@ li{
 }
 
 .case{
-	background:#D0E297;
+	background:#8B82AB;
 	padding-bottom:4px;
 	margin-bottom:4px;
 	padding-left:10px;
 	border:solid;
 	border-width:1px;
-	border-color:#648923;
+	border-color:#3A3156;
 	display:block;
 }

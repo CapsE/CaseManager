@@ -162,7 +162,7 @@ get "/" do
 	#@cases = Case.where("tags IS NOT ''")
 	#@cases = @cases.sort_by &:tags
 	@title = "Welcome."
-	erb :"posts/index"
+	erb :"index"
 end
 
 get "/result/:id" do
@@ -300,7 +300,7 @@ begin # Editieren von Caseses und Groups
 		@group = Group.update(params[:post][:id], params[:post])
 		params[:post]["tags"].split(",").each do |t|
       t.gsub!(" ", "")
-      Tag.new({"name" => t, "object" => "G" + @group.id})
+      Tag.new({"name" => t, "object" => "G" + @group.id.to_s})
     end
 		 if @group.save
 			redirect "/"
