@@ -132,10 +132,11 @@ a:visited {
 }
 
 .case{
-	background:#8B82AB;
+	'background:#8B82AB;
 	padding-bottom:4px;
 	margin-bottom:4px;
 	padding-left:10px;
+	padding-right:10px;
 	border:solid;
 	border-width:1px;
 	border-color:#3A3156;

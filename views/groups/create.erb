@@ -18,7 +18,7 @@
 	<br />
 	<input type="submit" value="Create!" onclick="SubmitForm()"/>
 </div>
-<div style="float:right; width:30%; height:800px; border:solid; padding-left:5px; overflow:scroll;">
+<div style="float:right; width:30%; height:800px; padding-left:5px; overflow:scroll;">
 	<div>
 		<img id="img_groupToggle" src="/Icons/Hide.png" onclick="ToggleGroups()" style="width:12px; height:12px; margin-right:4px;"/><h2 style="display:inline">Groups</h2>
 		<div id="group_list">
@@ -46,7 +46,7 @@
 	</div>
 </div>
 
-<div id="tooltip" class="tooltip" style="display:none; position:fixed; bottom:20px; left:20px; width:50%; height:400px;">
+<div id="tooltip" class="tooltip" style="display:none; width:100%;" onmouseenter="HideTooltip()">
 	<textarea id="tooltip-desc" style="width:98%;"></textarea>
 	<div id="tooltip-code" style="position:relative; width:98%; height:300px;"></div>
 </div>
@@ -62,6 +62,7 @@
 	function ShowTooltip(event){
 		var tooltip = document.getElementById("tooltip");
 		tooltip.style.display = "inline";
+		event.target.appendChild(tooltip);
 		
 		if(event.target.dataset.desc != ""){
 			document.getElementById("tooltip-desc").style.display = "inline";
@@ -80,6 +81,8 @@
 		}else{
 			document.getElementById("tooltip-code").style.height = 100;	
 		}
+		editor.clearSelection();
+		editor.setHighlightActiveLine(false);
 		editor.resize();
 	}
 	

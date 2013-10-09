@@ -277,7 +277,7 @@ begin # Editieren von Caseses und Groups
 		@case = Case.update(params[:post][:id], params[:post])
 		params[:post]["tags"].split(",").each do |t|
       t.gsub!(" ", "")
-      Tag.new({"name" => t, "object" => "C" + @case.id})
+      Tag.new({"name" => t, "object" => "C" + @case.id.to_s})
     end
 		 if @case.save
 			redirect "/"

@@ -18,8 +18,8 @@
 		<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
 		<% @group.elements.split(",").each do |el| %>
 			<% c = Case.find(el[1..-1]) %>
-			<div id="I<%= c.name %>" class="case" data-active="false" data-searchid="<%= c.tags %>" data-id="C<%= c.id %>" data-toolid="1" data-code="<%= c.code %>" data-desc="" draggable="true" onmouseover="ShowTooltip(event)" onmouseout="HideTooltip()" onmousedown="StartMove(event)" ondragstart="drag(event)"><%= c.name %></div>
-			<div id="dropZone" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
+			<div id="I<%= c.id %>" class="case" data-active="false" data-searchid='<%= c.tags %>' data-id='C<%= c.id %>' '<%= c.id %>' data-code='<%= c.code %>' data-desc='<%= c.comment %>' draggable="true" onmouseover="ShowTooltip(event)" onmouseout="HideTooltip()" onmousedown="StartMove(event)" ondragstart="drag(event)"><%= c.name %></div>
+			<div id="DZ<%= c.id %>" class="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="display:none;">drop here</div>
 		<% end %>
 	</div>
 	<br />
@@ -53,7 +53,7 @@
 	</div>
 </div>
 
-<div id="tooltip" class="tooltip" style="display:none; position:fixed; bottom:20px; left:20px; width:50%; height:400px;">
+<div id="tooltip" class="tooltip" style="display:none; width:100%;" onmouseenter="HideTooltip()">
 	<textarea id="tooltip-desc" style="width:98%;"></textarea>
 	<div id="tooltip-code" style="position:relative; width:98%; height:300px;"></div>
 </div>
@@ -69,6 +69,7 @@
 	function ShowTooltip(event){
 		var tooltip = document.getElementById("tooltip");
 		tooltip.style.display = "inline";
+		event.target.appendChild(tooltip);
 		
 		if(event.target.dataset.desc != ""){
 			document.getElementById("tooltip-desc").style.display = "inline";
@@ -87,6 +88,8 @@
 		}else{
 			document.getElementById("tooltip-code").style.height = 100;	
 		}
+		editor.clearSelection();
+		editor.setHighlightActiveLine(false);
 		editor.resize();
 	}
 	
@@ -206,6 +209,7 @@
 		StopMove();
 		var data=ev.dataTransfer.getData("Text");
 		if(data.substr(0,1) == "I"){
+			document.getElementById("holder").appendChild(document.getElementById("tooltip"));
 			document.getElementById("holder").removeChild(document.getElementById(data));
 			document.getElementById("holder").removeChild(document.getElementById("DZ" + data.substr(1,data.length)));
 		}
