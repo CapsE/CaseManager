@@ -161,7 +161,7 @@ get "/" do
 	@elements = ["<a href='/run/${self.id}'><img class='control' src='/Icons/play.png'></a>","<a href='/groups/edit/\${self.id}'><img class='control' src='/Icons/edit.png'></a>"]
 	#@cases = Case.where("tags IS NOT ''")
 	#@cases = @cases.sort_by &:tags
-	@title = "Welcome."
+	@title = "Runic"
 	erb :"index"
 end
 
