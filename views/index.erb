@@ -13,8 +13,8 @@
 <h2>Cases</h2>
 <% @cases.each do |c| %>
   <div class="case" id="<%= "#{c.name}"%>" data-search='true' data-searchid="<%= "#{c.name}"%>">
-    <h4><a href="/cases/edit/<%= c.id %>"><%= "#{c.name}" %></a></h4>
-	<p><div id="Code_<%= c.id %>" style="width:100%; height: 50px;"><%= c.code %></div>
+    <div class="caseHead"><a href="/cases/edit/<%= c.id %>"><%= "#{c.name}" %></a></div>
+	<p><div id="Code_<%= c.id %>" style="width:100%; height: 100px;"><%= c.code %></div>
 	<script>
 	    var editor = ace.edit("Code_<%= c.id %>");
 	    console.debug("Code_<%= c.id %>")

@@ -1,4 +1,4 @@
-a = "TEST"
-a.split(",").each do |b|
-  puts b
-end
+require "rubygems"
+
+@gems = Gem::Specification.all().map{|g| [g.name, g.version.to_s].join('-') }
+puts @gems

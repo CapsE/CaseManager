@@ -3,6 +3,7 @@
 	require 'sinatra'
 	require 'sinatra/activerecord'
 	require 'sinatra/cookies'
+	require 'sinatra/streaming'
 	require './environments'
 	require 'sinatra/flash'
 	require 'sinatra/redirect_with_flash'
@@ -240,12 +241,16 @@ begin # Erstellen von Caseses und Groups
 	
 	# Interface Groups
 	get "/groups/create" do
-		@groups = Group.order("created_at DESC")
+	  @groups = []
+    @cases = []
+	  
+	  cookieSelect()
+		#@groups = Group.order("created_at DESC")
 		@tree = ""
 		@id = 0
 		@elements = []
 
-		@cases = Case.where("tags IS NOT ''")
+		#@cases = Case.where("tags IS NOT ''")
 		@title = "Create Group"
 		@group = Group.new
 		erb :"groups/create"
@@ -344,6 +349,22 @@ begin # Löschen von Cases und Groups
 		redirect "/"
 	end
 
+end
+
+begin # Library Features
+  get "/library" do
+    if $gems == nil
+      $gems = %x[gem list -d --no-details].split(/\n/)
+    end
+    erb :library
+  end
+  
+  post "/gem" do
+    puts "installing #{params[:gem]}"
+    $gems = nil
+    gem install params[:gem]
+    redirect "/library"
+  end
 end
 
 

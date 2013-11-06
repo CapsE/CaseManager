@@ -1,0 +1,18 @@
+<h2>Librarys</h2>
+<div style="width:45%; padding:5px;">
+	<h4>Installed Gems</h4>
+	<div style="height: 500px;overflow: auto;">
+		<% $gems.each do |gem| %>
+			<% gemName = gem.split(" ")[0]%>
+			<a class="gem" style="color:#880000;" href="http://rubygems.org/gems/<%= gemName %>" target="_blank"><%= gem%></a><br>
+		<%end%>
+	</div><br>
+	<form id="gemInstall" action="/gem" method="post">
+		<div style="float:left;">gem install </div><input disabled type="text" id="post_gem" name="gem" style="width:75%;" />
+		<input type="submit" value="install" disabled/>
+	</form>
+</div>
+<div style="width:45%; float:right;">
+	
+	
+</div>
